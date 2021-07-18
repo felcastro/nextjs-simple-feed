@@ -1,14 +1,24 @@
-import { Avatar } from "../Avatar";
+import { Box, Flex, Textarea, Avatar } from "@chakra-ui/react";
 
 export const Header = (props) => {
   return (
-    <div className="bg-white flex p-2 space-x-2 shadow" {...props}>
-      <div>
+    <Flex
+      as="header"
+      position="sticky"
+      top={0}
+      p={2}
+      border="1px"
+      borderColor="gray.200"
+      zIndex="sticky"
+      bg="white"
+      {...props}
+    >
+      <Box mr={2}>
         <Avatar />
-      </div>
-      <div className="flex-1 pt-2">
-        <input placeholder="Post something!" />
-      </div>
-    </div>
+      </Box>
+      <Box flex={1}>
+        <Textarea placeholder="Post something!"/>
+      </Box>
+    </Flex>
   );
 };
