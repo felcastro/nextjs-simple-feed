@@ -25,11 +25,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ChakraProvider theme={extendedTheme}>
-      <Box minH="100vh">
-        <Container maxW="container.md" px={2}>
-          <Component {...pageProps} />
-        </Container>
-      </Box>
+      <Container minH="100vh" maxW="container.md" p={2}>
+        <Component {...pageProps} />
+      </Container>
     </ChakraProvider>
   );
 }
