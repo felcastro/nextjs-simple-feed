@@ -1,11 +1,7 @@
+import { Box, Flex, Avatar, Stack, Text, FlexProps } from "@chakra-ui/react";
 import { format } from "date-fns";
-import { Avatar } from "../Avatar";
 
-const PostLeftColor = (props) => (
-  <div className="w-1 rounded-l-md bg-green-300" {...props} />
-);
-
-export interface PostProps {
+export interface PostProps extends FlexProps {
   avatarUrl: string;
   creatorUsername: string;
   createdAt: Date;
@@ -19,21 +15,28 @@ export const Post = ({
   content,
   ...props
 }: PostProps) => (
-  <div className="flex bg-white shadow rounded-md" {...props}>
-    <PostLeftColor />
-    <div className="flex flex-1 py-2 px-1 space-x-2">
-      <div>
-        <Avatar />
-      </div>
-      <div className="flex-1">
-        <span className="block">{creatorUsername}</span>
-        <span className="block leading-none text-sm text-gray-600">
+  <Flex
+    py={2}
+    px={2}
+    shadow="sm"
+    borderRadius="md"
+    border="1px"
+    borderColor="gray.200"
+    {...props}
+  >
+    <Box mr={2}>
+      <Avatar src={avatarUrl} />
+    </Box>
+    <Stack flex={1}>
+      <Stack spacing={0}>
+        <Text as="span" lineHeight="shorter">
+          {creatorUsername}
+        </Text>
+        <Text as="span" fontSize="sm" color="gray.600" lineHeight="shorter">
           {format(createdAt, "yyyy-MM-dd HH:mm")}
-        </span>
-        <div className="mt-2">
-          <p>{content}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+        </Text>
+      </Stack>
+      <Box>{content}</Box>
+    </Stack>
+  </Flex>
 );
