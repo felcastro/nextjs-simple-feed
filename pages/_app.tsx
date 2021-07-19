@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { ChakraProvider, Box, Container, extendTheme } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
-import "tailwindcss/tailwind.css";
 import { supabase } from "../api";
-import "../styles/globals.css";
+import { theme } from "../theme";
 
 function MyApp({ Component, pageProps }) {
+  const extendedTheme = extendTheme(theme);
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
@@ -23,12 +24,11 @@ function MyApp({ Component, pageProps }) {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 md:px-0 mt-4">
-        {user}
+    <ChakraProvider theme={extendedTheme}>
+      <Container minH="100vh" maxW="container.md" p={2}>
         <Component {...pageProps} />
-      </div>
-    </div>
+      </Container>
+    </ChakraProvider>
   );
 }
 
