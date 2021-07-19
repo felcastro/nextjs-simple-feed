@@ -11,9 +11,9 @@ export interface FeedPostI {
   owner_avatar_url: string;
 }
 
-export async function getFeed(): Promise<FeedPostI[]> {
+export async function getFeed() {
   const { data, error, status } = await supabase
-    .from("feed")
+    .from<FeedPostI>("feed")
     .select("*")
     .order("created_at", { ascending: false });
 
