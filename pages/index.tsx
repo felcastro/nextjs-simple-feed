@@ -20,24 +20,21 @@ import {
   Textarea,
   useDisclosure,
   useToast,
+  HStack,
+  IconButtonProps,
 } from "@chakra-ui/react";
-import React, { FormEvent } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { FaEdit, FaPalette } from "react-icons/fa";
+import React, { useEffect, useState, FormEvent } from "react";
+import { ColorResult } from "react-color";
+import { FaEdit, FaFillDrip, FaFont } from "react-icons/fa";
 import { supabase } from "../api";
+import { ColorPickerButton } from "../components/ColorPickerButton";
 import { Post } from "../components/Post";
 import { feedService } from "../services";
 import { FeedPostI } from "../services/feed.service";
 
-interface FloatingPostButtonProps {
-  onOpen: () => void;
-}
-
-const FloatingPostButton = ({ onOpen }: FloatingPostButtonProps) => (
+const FloatingButton = (props: IconButtonProps) => (
   <IconButton
     icon={<FaEdit />}
-    aria-label="New post"
     position="absolute"
     bottom={4}
     right={4}
@@ -48,12 +45,22 @@ const FloatingPostButton = ({ onOpen }: FloatingPostButtonProps) => (
     isRound
     shadow="md"
     display={{ base: "inline-flex", sm: "none" }}
-    onClick={onOpen}
+    {...props}
   />
 );
 
 const CreatePostForm = ({ ...props }: StackProps) => {
   const [postContent, setPostContent] = useState<string>("");
+  const [backgroundColor, setBackgroundColor] = useState<string>();
+  const [fontColor, setFontColor] = useState<string>();
+
+  function handleBackgroundColorChange(color: ColorResult) {
+    setBackgroundColor(color.hex);
+  }
+
+  function handleFontColorChange(color: ColorResult) {
+    setFontColor(color.hex);
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -64,24 +71,32 @@ const CreatePostForm = ({ ...props }: StackProps) => {
       <FormControl id="post">
         <Textarea
           placeholder="Post something!"
-          onChange={(e) => setPostContent(e.target.value)}
           maxLength={500}
           maxH="xs"
+          bg={backgroundColor ? backgroundColor : "inherit"}
+          color={fontColor ? fontColor : "inherit"}
+          borderColor={fontColor ? fontColor : "inherit"}
+          onChange={(e) => setPostContent(e.target.value)}
         />
         <FormHelperText>
           {500 - postContent.length} characters left
         </FormHelperText>
       </FormControl>
       <Flex align="center">
-        <Flex flex={1}>
-          <IconButton
-            icon={<FaPalette />}
-            aria-label="Select Color"
-            isRound
-            colorScheme="brand"
-            variant="outline"
+        <HStack flex={1}>
+          <ColorPickerButton
+            icon={<FaFillDrip />}
+            aria-label="Select background color"
+            color={backgroundColor}
+            onColorChange={handleBackgroundColorChange}
           />
-        </Flex>
+          <ColorPickerButton
+            icon={<FaFont />}
+            aria-label="Select font color"
+            color={fontColor}
+            onColorChange={handleFontColorChange}
+          />
+        </HStack>
         <Button type="submit" colorScheme="brand" size="sm">
           Send
         </Button>
@@ -96,7 +111,7 @@ interface CreatePostModalProps {
 }
 
 const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => (
-  <Modal isOpen={isOpen} onClose={onClose}>
+  <Modal isOpen={isOpen} onClose={onClose} isCentered>
     <ModalOverlay />
     <ModalContent>
       <ModalHeader>New Post</ModalHeader>
@@ -190,7 +205,7 @@ export default function Home() {
           ))
         )}
       </Stack>
-      <FloatingPostButton onOpen={onOpen} />
+      <FloatingButton onClick={onOpen} aria-label="New post" />
     </Box>
   );
 }
