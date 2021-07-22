@@ -1,5 +1,6 @@
-import { Box, Flex, Avatar, Stack, Text, FlexProps } from "@chakra-ui/react";
+import { Box, Avatar, Stack, Text, FlexProps } from "@chakra-ui/react";
 import { format, parseISO } from "date-fns";
+import { FlexArea } from "../FlexArea";
 
 export interface PostProps extends FlexProps {
   avatarUrl: string;
@@ -19,12 +20,10 @@ export const Post = ({
   backgroundColor,
   ...props
 }: PostProps) => (
-  <Flex
+  <FlexArea
     py={2}
     px={2}
-    shadow="sm"
     borderRadius="md"
-    border="1px"
     borderColor={fontColor ? fontColor : "gray.200"}
     color={fontColor}
     bg={backgroundColor}
@@ -49,5 +48,5 @@ export const Post = ({
       </Stack>
       <Box>{content}</Box>
     </Stack>
-  </Flex>
+  </FlexArea>
 );

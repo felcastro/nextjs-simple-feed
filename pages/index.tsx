@@ -27,7 +27,9 @@ import React, { useEffect, useState, FormEvent } from "react";
 import { ColorResult } from "react-color";
 import { FaEdit, FaFillDrip, FaFont } from "react-icons/fa";
 import { supabase } from "../api";
+import { FlexArea } from "../components/FlexArea";
 import { ColorPickerButton } from "../components/ColorPickerButton";
+import { Header } from "../components/Header";
 import { Post } from "../components/Post";
 import { feedService } from "../services";
 import { FeedPostI } from "../services/feed.service";
@@ -170,21 +172,15 @@ export default function Home() {
   }, []);
 
   return (
-    <Box>
+    <>
+      <Header title="Home" />
       <CreatePostModal isOpen={isOpen} onClose={onClose} />
-      <Flex
-        p={2}
-        border="1px"
-        borderColor="gray.200"
-        bg="white"
-        shadow="sm"
-        display={{ base: "none", sm: "flex" }}
-      >
+      <FlexArea p={2} display={{ base: "none", sm: "flex" }}>
         <Box mr={2}>
           <Avatar />
         </Box>
         <CreatePostForm flex={1} />
-      </Flex>
+      </FlexArea>
       <Divider my={2} display={{ base: "none", sm: "block" }} />
       <Stack spacing={2}>
         {isLoading ? (
@@ -206,6 +202,6 @@ export default function Home() {
         )}
       </Stack>
       <FloatingButton onClick={onOpen} aria-label="New post" />
-    </Box>
+    </>
   );
 }
