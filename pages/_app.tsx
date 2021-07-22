@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChakraProvider, Box, Container, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, Container, extendTheme } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../api";
 import { theme } from "../theme";
@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ChakraProvider theme={extendedTheme}>
-      <Container minH="100vh" maxW="container.md" p={2}>
+      <Container minH="100vh" maxW="container.md" px={2} pb={2}>
         <Component {...pageProps} />
       </Container>
     </ChakraProvider>
