@@ -25,8 +25,8 @@ export const Post = ({
     px={2}
     borderRadius="md"
     borderColor={fontColor ? fontColor : "gray.200"}
-    color={fontColor}
-    bg={backgroundColor}
+    color={fontColor ? fontColor : "inherit"}
+    bg={backgroundColor ? backgroundColor : "white"}
     {...props}
   >
     <Box mr={2}>

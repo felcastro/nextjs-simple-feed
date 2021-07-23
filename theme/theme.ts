@@ -1,4 +1,11 @@
 export const theme = {
+  styles: {
+    global: {
+      body: {
+        bg: "gray.50",
+      },
+    },
+  },
   colors: {
     brand: {
       50: "#defff5",

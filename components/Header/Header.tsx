@@ -1,16 +1,16 @@
 import {
   HStack,
   Heading,
-  Link,
   FlexProps,
   IconButton,
   HeadingProps,
-  LinkProps,
+  Divider,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
+import React from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { FlexArea } from "../FlexArea";
+import { NextLink } from "../NextLink";
 
 const BackButton = () => {
   const router = useRouter();
@@ -34,12 +34,6 @@ const HeaderTitle = ({ children, ...props }: HeadingProps) => (
   </Heading>
 );
 
-const HeaderLinkItem = ({ children, ...props }: LinkProps) => (
-  <Link as={NextLink} style={{color: "white"}} {...props}>
-    {children}
-  </Link>
-);
-
 export interface HeaderProps extends FlexProps {
   title: string;
   hasBackButton?: boolean;
@@ -60,7 +54,11 @@ export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => {
       {hasBackButton && <BackButton />}
       <HeaderTitle>{title}</HeaderTitle>
       <HStack flex={1} justify="flex-end">
-        <HeaderLinkItem href="/signin">SignIn</HeaderLinkItem>
+        <NextLink href="/">Home</NextLink>
+        <Divider orientation="vertical" h={4} />
+        <NextLink href="/signin">Sign in</NextLink>
+        <Divider orientation="vertical" h={4} />
+        <NextLink href="/signup">Sign up</NextLink>
       </HStack>
     </FlexArea>
   );

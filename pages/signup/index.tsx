@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Box,
   FormControl,
   FormErrorMessage,
   Heading,
@@ -12,17 +13,21 @@ import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 
-export default function SignIn() {
+export default function SignUp() {
   const [isLoading, setLoading] = useState<boolean>();
 
   return (
     <>
-      <Header title="Sign in" hasBackButton />
+      <Header title="Sign up" hasBackButton />
       <FlexArea direction="column" px={2} py={16} align="center">
         <Heading as="h2" size="md">
-          Inform your credentials
+          Create an account
         </Heading>
         <Stack as="form" mt={4} w="xs">
+          <FormControl id="username">
+            <Input disabled={isLoading} placeholder="Username" />
+            <FormErrorMessage></FormErrorMessage>
+          </FormControl>
           <FormControl id="email">
             <Input disabled={isLoading} placeholder="E-mail" />
             <FormErrorMessage></FormErrorMessage>
@@ -32,18 +37,17 @@ export default function SignIn() {
             <FormErrorMessage></FormErrorMessage>
           </FormControl>
           <Button colorScheme="brand" isLoading={isLoading}>
-            Sign in
+            Sign up
           </Button>
-          <Stack textAlign="center">
-            <NextLink href="/forgot-password">Forgot your password?</NextLink>
+          <Box textAlign="center">
             <Text as="span">
-              New here?{" "}
-              <NextLink as={NextLink} href="/signup">
-                Create an account
+              Already have an account?{" "}
+              <NextLink as={NextLink} href="/signin">
+                Sign in
               </NextLink>
               .
             </Text>
-          </Stack>
+          </Box>
         </Stack>
       </FlexArea>
     </>
