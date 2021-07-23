@@ -12,34 +12,29 @@ import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 
-export default function SignIn() {
+export default function ForgotPassword() {
   const [isLoading, setLoading] = useState<boolean>();
 
   return (
     <>
-      <Header title="Sign in" hasBackButton />
+      <Header title="Password Recovery" hasBackButton />
       <FlexArea direction="column" px={2} py={16} align="center">
         <Heading as="h2" size="md">
-          Inform your credentials
+          Inform your e-mail
         </Heading>
         <Stack as="form" mt={4} w="xs">
           <FormControl id="email">
             <Input disabled={isLoading} placeholder="E-mail" />
             <FormErrorMessage></FormErrorMessage>
           </FormControl>
-          <FormControl id="password">
-            <Input disabled={isLoading} placeholder="Password" />
-            <FormErrorMessage></FormErrorMessage>
-          </FormControl>
           <Button colorScheme="brand" isLoading={isLoading}>
-            Sign in
+            Send recovery link
           </Button>
           <Stack textAlign="center">
-            <NextLink href="/forgot-password">Forgot your password?</NextLink>
             <Text as="span">
-              New here?{" "}
-              <NextLink as={NextLink} href="/signup">
-                Create an account
+              Know your password?{" "}
+              <NextLink as={NextLink} href="/signin">
+                Sign in
               </NextLink>
               .
             </Text>
