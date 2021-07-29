@@ -13,6 +13,7 @@ import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { supabase } from "../../api";
+import { useAuth } from "../../context";
 
 type InputType = {
   value: string,
@@ -27,6 +28,7 @@ type DivElementEvent = FormEventElement & HTMLDivElement;
 
 export default function SignIn() {
   const [isLoading, setLoading] = useState<boolean>();
+  const { setUser, setSession } = useAuth();
 
   const toast = useToast();
   async function onSubmit(e: React.FormEvent<DivElementEvent>) {
@@ -47,6 +49,8 @@ export default function SignIn() {
       })
 
     } else {
+      setUser(user);
+      setSession(session);
       toast({
         ...defaultToastSettings,
         title: `Successfully logged`,

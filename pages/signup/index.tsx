@@ -15,6 +15,7 @@ import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { supabase } from "../../api";
+import { useAuth } from "../../context";
 
 type InputType = {
   value: string,
@@ -29,7 +30,9 @@ type DivElementEvent = FormEventElement & HTMLDivElement;
 
 export default function SignUp() {
   const [isLoading, setLoading] = useState<boolean>();
+  const { setUser, setSession } = useAuth();
   const toast = useToast();
+
   async function onSubmit(e: React.FormEvent<DivElementEvent>) {
     e.preventDefault();
     const defaultToastSettings = {
@@ -48,6 +51,8 @@ export default function SignUp() {
       })
 
     } else {
+      setUser(user);
+      setSession(session);
       toast({
         ...defaultToastSettings,
         title: `User created`,
