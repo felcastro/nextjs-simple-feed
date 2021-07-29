@@ -22,7 +22,7 @@ export default function ForgotPassword() {
         <Heading as="h2" size="md">
           Inform your e-mail
         </Heading>
-        <Stack as="form" mt={4} w="xs">
+        <Stack as="form" mt={4} w={{ base: "100%", sm: "xs" }}>
           <FormControl id="email">
             <Input disabled={isLoading} placeholder="E-mail" />
             <FormErrorMessage></FormErrorMessage>

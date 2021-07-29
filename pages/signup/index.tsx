@@ -23,7 +23,7 @@ export default function SignUp() {
         <Heading as="h2" size="md">
           Create an account
         </Heading>
-        <Stack as="form" mt={4} w="xs">
+        <Stack as="form" mt={4} w={{ base: "100%", sm: "xs" }}>
           <FormControl id="username">
             <Input disabled={isLoading} placeholder="Username" />
             <FormErrorMessage></FormErrorMessage>
