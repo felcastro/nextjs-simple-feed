@@ -66,7 +66,7 @@ export default function SignIn() {
         <Heading as="h2" size="md">
           Inform your credentials
         </Heading>
-        <Stack as="form" mt={4} w="xs" onSubmit={onSubmit}>
+        <Stack as="form" mt={4} w={{ base: "100%", sm: "xs" }} onSubmit={onSubmit}>
           <FormControl id="email">
             <Input disabled={isLoading} placeholder="E-mail" />
             <FormErrorMessage></FormErrorMessage>
