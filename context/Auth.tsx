@@ -1,19 +1,26 @@
 import React, { useState } from 'react'
 import { useContext } from 'react';
 
-interface AuthContextI<T, K> {
-  user?: Record<string, T>;
-  session?: Record<string, K>;
-  setUser?: (user: T) => void;
-  setSession?: (user: K) => void;
+type SetUserInfoType = (user: unknown, session: unknown) => void; 
+
+interface AuthContextI {
+  user?: unknown;
+  session?: unknown;
+  setUserInfo?: SetUserInfoType; 
 }
 
-const AuthContext = React.createContext<AuthContextI<any, any>>({})
+const AuthContext = React.createContext<AuthContextI>({})
 
 export function AuthProvider({children}) {
-  const [session, setSession] = useState();
-  const [user, setUser] = useState();
-  return <AuthContext.Provider value={{session, user, setSession, setUser}}>{children}</AuthContext.Provider>
+  const [session, setSession] = useState<unknown>();
+  const [user, setUser] = useState<unknown>();
+
+  const setUserInfo: SetUserInfoType = (user, session) => {
+    setUser(user)
+    setSession(session);
+  }
+  
+  return <AuthContext.Provider value={{session, user, setUserInfo}}>{children}</AuthContext.Provider>
   
 }
 

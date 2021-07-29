@@ -28,7 +28,7 @@ type DivElementEvent = FormEventElement & HTMLDivElement;
 
 export default function SignIn() {
   const [isLoading, setLoading] = useState<boolean>();
-  const { setUser, setSession } = useAuth();
+  const { setUserInfo } = useAuth();
 
   const toast = useToast();
   async function onSubmit(e: React.FormEvent<DivElementEvent>) {
@@ -49,8 +49,7 @@ export default function SignIn() {
       })
 
     } else {
-      setUser(user);
-      setSession(session);
+      setUserInfo(user, session)
       toast({
         ...defaultToastSettings,
         title: `Successfully logged`,
