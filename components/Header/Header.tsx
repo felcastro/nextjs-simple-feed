@@ -10,10 +10,13 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Button,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { FaArrowLeft, FaBars } from "react-icons/fa";
+import { supabase } from "../../api";
+import { useAuth } from "../../context";
 import { FlexArea } from "../FlexArea";
 import { NextLink } from "../NextLink";
 
@@ -45,12 +48,38 @@ const HeaderTitle = ({ children, ...props }: HeadingProps) => (
   </Heading>
 );
 
+const HeaderAuthenticatedLinks = () => (
+  <>
+    <NextLink href="/">Home</NextLink>
+    <Divider orientation="vertical" h={4} />
+    <Button
+      colorScheme="blue"
+      variant="link"
+      onClick={() => supabase.auth.signOut()}
+    >
+      Logout
+    </Button>
+  </>
+);
+
+const HeaderUnauthenticatedLinks = () => (
+  <>
+    <NextLink href="/">Home</NextLink>
+    <Divider orientation="vertical" h={4} />
+    <NextLink href="/signin">Sign in</NextLink>
+    <Divider orientation="vertical" h={4} />
+    <NextLink href="/signup">Sign up</NextLink>
+  </>
+);
+
 export interface HeaderProps extends FlexProps {
   title: string;
   hasBackButton?: boolean;
 }
 
 export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => {
+  const { user } = useAuth();
+
   return (
     <FlexArea
       position="sticky"
@@ -69,13 +98,7 @@ export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => {
         justify="flex-end"
         display={{ base: "none", sm: "flex" }}
       >
-        <>
-          <NextLink href="/">Home</NextLink>
-          <Divider orientation="vertical" h={4} />
-          <NextLink href="/signin">Sign in</NextLink>
-          <Divider orientation="vertical" h={4} />
-          <NextLink href="/signup">Sign up</NextLink>
-        </>
+        {user ? <HeaderAuthenticatedLinks /> : <HeaderUnauthenticatedLinks />}
       </HStack>
       <HStack
         flex={1}

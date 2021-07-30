@@ -7,22 +7,6 @@ import { AuthProvider } from "../context";
 
 function MyApp({ Component, pageProps }) {
   const extendedTheme = extendTheme(theme);
-  const [user, setUser] = useState<User>();
-
-  useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange(async () => checkUser());
-
-    checkUser();
-
-    return () => {
-      data?.unsubscribe();
-    };
-  }, []);
-
-  async function checkUser(): Promise<void> {
-    const user = supabase.auth.user();
-    setUser(user);
-  }
 
   return (
     <ChakraProvider theme={extendedTheme}>

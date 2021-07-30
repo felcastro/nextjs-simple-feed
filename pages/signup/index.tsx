@@ -15,51 +15,48 @@ import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { supabase } from "../../api";
-import { useAuth } from "../../context";
+import { useRouter } from "next/router";
 
 type InputType = {
-  value: string,
-}
+  value: string;
+};
 
 interface FormEventElement {
-  email: InputType
-  password: InputType
+  email: InputType;
+  password: InputType;
 }
 
 type DivElementEvent = FormEventElement & HTMLDivElement;
 
 export default function SignUp() {
   const [isLoading, setLoading] = useState<boolean>();
-  const { setUserInfo } = useAuth();
+  const router = useRouter();
   const toast = useToast();
 
   async function onSubmit(e: React.FormEvent<DivElementEvent>) {
     e.preventDefault();
     const defaultToastSettings = {
       isClosable: true,
-    }
+    };
     setLoading(true);
-    const{ user, session, error } = await supabase.auth.signUp({
+    const { user, session, error } = await supabase.auth.signUp({
       email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
-    })
-    if(error) {
+    });
+    if (error) {
       toast({
         ...defaultToastSettings,
         title: `An error occured while creating your user`,
         status: "error",
-      })
-
+      });
     } else {
-      setUserInfo(user, session)
-
       toast({
         ...defaultToastSettings,
         title: `User created`,
         status: "success",
-      })
+      });
     }
-    setLoading(false);
+    router.push("/");
   }
 
   return (
@@ -69,7 +66,12 @@ export default function SignUp() {
         <Heading as="h2" size="md">
           Create an account
         </Heading>
-        <Stack as="form" mt={4} w={{ base: "100%", sm: "xs" }} onSubmit={onSubmit}>
+        <Stack
+          as="form"
+          mt={4}
+          w={{ base: "100%", sm: "xs" }}
+          onSubmit={onSubmit}
+        >
           <FormControl id="username">
             <Input disabled={isLoading} placeholder="Username" />
             <FormErrorMessage></FormErrorMessage>
@@ -81,7 +83,11 @@ export default function SignUp() {
           </FormControl>
           <FormControl id="password">
             <FormLabel>Password</FormLabel>
-            <Input disabled={isLoading} placeholder="Password" type="password" />
+            <Input
+              disabled={isLoading}
+              placeholder="Password"
+              type="password"
+            />
             <FormErrorMessage></FormErrorMessage>
           </FormControl>
           <Button type="submit" colorScheme="brand" isLoading={isLoading}>

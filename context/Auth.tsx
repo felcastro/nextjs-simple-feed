@@ -1,27 +1,40 @@
-import React, { useState } from 'react'
-import { useContext } from 'react';
-
-type SetUserInfoType = (user: unknown, session: unknown) => void; 
+import { Session, User } from "@supabase/supabase-js";
+import React, { useEffect, useState, useContext } from "react";
+import { supabase } from "../api";
 
 interface AuthContextI {
-  user?: unknown;
-  session?: unknown;
-  setUserInfo?: SetUserInfoType; 
+  user?: User;
+  session?: Session;
 }
 
-const AuthContext = React.createContext<AuthContextI>({})
+const AuthContext = React.createContext<AuthContextI>({});
 
-export function AuthProvider({children}) {
-  const [session, setSession] = useState<unknown>();
-  const [user, setUser] = useState<unknown>();
+export function AuthProvider({ children }) {
+  const [session, setSession] = useState<Session>();
+  const [user, setUser] = useState<User>();
 
-  const setUserInfo: SetUserInfoType = (user, session) => {
-    setUser(user)
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange(async () => checkUser());
+
+    checkUser();
+
+    return () => {
+      data?.unsubscribe();
+    };
+  }, []);
+
+  async function checkUser(): Promise<void> {
+    const user = supabase.auth.user();
+    const session = supabase.auth.session();
+    setUser(user);
     setSession(session);
   }
-  
-  return <AuthContext.Provider value={{session, user, setUserInfo}}>{children}</AuthContext.Provider>
-  
+
+  return (
+    <AuthContext.Provider value={{ session, user }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
