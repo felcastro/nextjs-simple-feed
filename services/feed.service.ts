@@ -1,4 +1,4 @@
-import { supabase } from "../api";
+import { supabase } from "../supabaseApi";
 
 export interface FeedPostI {
   uuid: string;

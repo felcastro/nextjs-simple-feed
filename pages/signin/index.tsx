@@ -12,7 +12,7 @@ import {
 import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
-import { supabase } from "../../api";
+import { supabase } from "../../supabaseApi";
 import { useRouter } from "next/router";
 
 type InputType = {
@@ -37,24 +37,22 @@ export default function SignIn() {
       isClosable: true,
     };
     setLoading(true);
-    const { user, session, error } = await supabase.auth.signIn({
+
+    const { error } = await supabase.auth.signIn({
       email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
     });
+
     if (error) {
       toast({
         ...defaultToastSettings,
         title: `An error occured while logging`,
         status: "error",
       });
+      setLoading(false);
     } else {
-      toast({
-        ...defaultToastSettings,
-        title: `Successfully logged`,
-        status: "success",
-      });
+      router.push("/");
     }
-    router.push("/");
   }
 
   return (

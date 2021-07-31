@@ -14,14 +14,16 @@ import {
 import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
-import { supabase } from "../../api";
+import { supabase } from "../../supabaseApi";
 import { useRouter } from "next/router";
+import { authService } from "../../services";
 
 type InputType = {
   value: string;
 };
 
 interface FormEventElement {
+  username: InputType;
   email: InputType;
   password: InputType;
 }
@@ -38,25 +40,43 @@ export default function SignUp() {
     const defaultToastSettings = {
       isClosable: true,
     };
-    setLoading(true);
-    const { user, session, error } = await supabase.auth.signUp({
-      email: e.currentTarget.email.value,
-      password: e.currentTarget.password.value,
-    });
-    if (error) {
-      toast({
-        ...defaultToastSettings,
-        title: `An error occured while creating your user`,
-        status: "error",
+
+    try {
+      setLoading(true);
+
+      const { username, email, password } = e.currentTarget;
+
+      await authService.signUp({
+        username: username.value,
+        email: email.value,
+        password: password.value,
       });
-    } else {
+
       toast({
         ...defaultToastSettings,
         title: `User created`,
         status: "success",
       });
+
+      const { error } = await supabase.auth.signIn({
+        email: email.value,
+        password: password.value,
+      });
+
+      if (error) {
+        router.push("/signin");
+      } else {
+        router.push("/");
+      }
+    } catch (err) {
+      toast({
+        ...defaultToastSettings,
+        title: `An error occurred while creating your user`,
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
     }
-    router.push("/");
   }
 
   return (
