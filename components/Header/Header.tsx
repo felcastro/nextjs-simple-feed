@@ -15,7 +15,7 @@ import {
 import { useRouter } from "next/router";
 import React from "react";
 import { FaArrowLeft, FaBars } from "react-icons/fa";
-import { supabase } from "../../api";
+import { supabase } from "../../supabaseApi";
 import { useAuth } from "../../context";
 import { FlexArea } from "../FlexArea";
 import { NextLink } from "../NextLink";

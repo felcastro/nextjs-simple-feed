@@ -26,7 +26,7 @@ import {
 import React, { useEffect, useState, FormEvent } from "react";
 import { ColorResult } from "react-color";
 import { FaEdit, FaFillDrip, FaFont } from "react-icons/fa";
-import { supabase } from "../api";
+import { supabase } from "../supabaseApi";
 import { FlexArea } from "../components/FlexArea";
 import { ColorPickerButton } from "../components/ColorPickerButton";
 import { Header } from "../components/Header";

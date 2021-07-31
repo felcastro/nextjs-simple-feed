@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
 import { ChakraProvider, Container, extendTheme } from "@chakra-ui/react";
-import { User } from "@supabase/supabase-js";
-import { supabase } from "../api";
 import { theme } from "../theme";
 import { AuthProvider } from "../context";
 
