@@ -1,8 +1,6 @@
-import React, { useState } from "react";
 import {
   Box,
   FormControl,
-  FormLabel,
   FormErrorMessage,
   Heading,
   Input,
@@ -10,72 +8,71 @@ import {
   Button,
   Text,
   useToast,
+  UseToastOptions,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+
 import { FlexArea } from "../../components/FlexArea";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { supabase } from "../../supabaseApi";
-import { useRouter } from "next/router";
 import { authService } from "../../services";
 
-type InputType = {
-  value: string;
-};
-
-interface FormEventElement {
-  username: InputType;
-  email: InputType;
-  password: InputType;
+interface ISignUpFormInput {
+  username: string;
+  email: string;
+  password: string;
 }
 
-type DivElementEvent = FormEventElement & HTMLDivElement;
+const signUpFormSchema = yup.object().shape({
+  username: yup.string().min(1).max(255).required(),
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+});
 
 export default function SignUp() {
-  const [isLoading, setLoading] = useState<boolean>();
   const router = useRouter();
   const toast = useToast();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ISignUpFormInput>({
+    resolver: yupResolver(signUpFormSchema),
+  });
 
-  async function onSubmit(e: React.FormEvent<DivElementEvent>) {
-    e.preventDefault();
-    const defaultToastSettings = {
+  async function onSubmit(data) {
+    const defaultToastSettings: UseToastOptions = {
       isClosable: true,
+      position: "top-right",
     };
 
     try {
-      setLoading(true);
-
-      const { username, email, password } = e.currentTarget;
+      const { username, email, password } = data;
 
       await authService.signUp({
-        username: username.value,
-        email: email.value,
-        password: password.value,
+        username,
+        email,
+        password,
       });
 
       toast({
         ...defaultToastSettings,
-        title: `User created`,
+        title: `User created!`,
+        description: "Please sign in to start posting.",
         status: "success",
       });
 
-      const { error } = await supabase.auth.signIn({
-        email: email.value,
-        password: password.value,
-      });
-
-      if (error) {
-        router.push("/signin");
-      } else {
-        router.push("/");
-      }
+      router.push("/signin");
     } catch (err) {
       toast({
         ...defaultToastSettings,
-        title: `An error occurred while creating your user`,
+        title: `Error during sign up`,
         status: "error",
       });
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -90,27 +87,40 @@ export default function SignUp() {
           as="form"
           mt={4}
           w={{ base: "100%", sm: "xs" }}
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <FormControl id="username">
-            <Input disabled={isLoading} placeholder="Username" />
-            <FormErrorMessage></FormErrorMessage>
-          </FormControl>
-          <FormControl id="email">
-            <FormLabel>Email</FormLabel>
-            <Input disabled={isLoading} placeholder="E-mail" />
-            <FormErrorMessage></FormErrorMessage>
-          </FormControl>
-          <FormControl id="password">
-            <FormLabel>Password</FormLabel>
+          <FormControl id="username" isInvalid={!!errors.username}>
             <Input
-              disabled={isLoading}
+              disabled={isSubmitting}
+              placeholder="Username"
+              {...register("username")}
+            />
+            <FormErrorMessage>
+              {errors.username && errors.username.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl id="email" isInvalid={!!errors.email}>
+            <Input
+              disabled={isSubmitting}
+              placeholder="E-mail"
+              {...register("email")}
+            />
+            <FormErrorMessage>
+              {errors.email && errors.email.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl id="password" isInvalid={!!errors.password}>
+            <Input
+              disabled={isSubmitting}
               placeholder="Password"
               type="password"
+              {...register("password")}
             />
-            <FormErrorMessage></FormErrorMessage>
+            <FormErrorMessage>
+              {errors.password && errors.password.message}
+            </FormErrorMessage>
           </FormControl>
-          <Button type="submit" colorScheme="brand" isLoading={isLoading}>
+          <Button type="submit" colorScheme="brand" isLoading={isSubmitting}>
             Sign up
           </Button>
           <Box textAlign="center">

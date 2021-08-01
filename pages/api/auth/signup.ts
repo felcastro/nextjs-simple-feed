@@ -12,7 +12,7 @@ export default async function handler(
     });
 
     if (!user || error) {
-      res.status(500).send({ message: "Error creating user." });
+      res.status(500).send({ message: "Error creating user" });
       return;
     }
 
@@ -25,7 +25,7 @@ export default async function handler(
 
     if (createProfileError) {
       console.log(createProfileError);
-      res.status(500).send({ message: "Error creating user profile." });
+      res.status(500).send({ message: "Error creating user profile" });
       return;
     }
 
