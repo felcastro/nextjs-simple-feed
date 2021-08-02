@@ -4,13 +4,13 @@ import {
   FlexProps,
   IconButton,
   HeadingProps,
-  Divider,
   useBreakpointValue,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Button,
+  LinkProps,
+  MenuItemProps,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
@@ -48,83 +48,80 @@ const HeaderTitle = ({ children, ...props }: HeadingProps) => (
   </Heading>
 );
 
-const HeaderAuthenticatedLinks = () => (
-  <>
-    <NextLink href="/">Home</NextLink>
-    <Divider orientation="vertical" h={4} />
-    <Button
-      colorScheme="blue"
-      variant="link"
-      onClick={() => supabase.auth.signOut()}
-    >
-      Logout
-    </Button>
-  </>
+interface HeaderMenuItemProps extends MenuItemProps {
+  title: string;
+  href?: string;
+  linkProps?: LinkProps;
+}
+
+const HeaderMenuItem = ({
+  href,
+  title,
+  linkProps,
+  ...props
+}: HeaderMenuItemProps) => (
+  <MenuItem color="brand.500" {...props}>
+    {href ? (
+      <NextLink href={href} _hover={{ textDecoration: "none" }} {...linkProps}>
+        {title}
+      </NextLink>
+    ) : (
+      title
+    )}
+  </MenuItem>
 );
 
-const HeaderUnauthenticatedLinks = () => (
-  <>
-    <NextLink href="/">Home</NextLink>
-    <Divider orientation="vertical" h={4} />
-    <NextLink href="/signin">Sign in</NextLink>
-    <Divider orientation="vertical" h={4} />
-    <NextLink href="/signup">Sign up</NextLink>
-  </>
-);
+const HeaderMenu = () => {
+  const { user } = useAuth();
+
+  const links = user
+    ? [
+        { href: "/", title: "Home" },
+        { title: "Logout", onClick: async () => await supabase.auth.signOut() },
+      ]
+    : [
+        { href: "/", title: "Home" },
+        { href: "/signin", title: "Sign in" },
+        { href: "/signup", title: "Sign up" },
+      ];
+
+  return (
+    <Menu placement="bottom-end">
+      <MenuButton
+        as={IconButton}
+        icon={<FaBars />}
+        colorScheme="brand"
+        variant="ghost"
+      />
+      <MenuList minW="unset">
+        {links.map((l) => (
+          <HeaderMenuItem key={l.href} {...l} />
+        ))}
+      </MenuList>
+    </Menu>
+  );
+};
 
 export interface HeaderProps extends FlexProps {
   title: string;
   hasBackButton?: boolean;
 }
 
-export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => {
-  const { user } = useAuth();
-
-  return (
-    <FlexArea
-      position="sticky"
-      zIndex="sticky"
-      top="0"
-      align="center"
-      h={14}
-      mb={2}
-      px={2}
-      {...props}
-    >
-      {hasBackButton && <BackButton />}
-      <HeaderTitle>{title}</HeaderTitle>
-      <HStack
-        flex={1}
-        justify="flex-end"
-        display={{ base: "none", sm: "flex" }}
-      >
-        {user ? <HeaderAuthenticatedLinks /> : <HeaderUnauthenticatedLinks />}
-      </HStack>
-      <HStack
-        flex={1}
-        justify="flex-end"
-        display={{ base: "flex", sm: "none" }}
-      >
-        <Menu placement="bottom-end">
-          <MenuButton
-            as={IconButton}
-            icon={<FaBars />}
-            colorScheme="brand"
-            variant="ghost"
-          />
-          <MenuList minW="unset">
-            <MenuItem as={NextLink} href="/">
-              Home
-            </MenuItem>
-            <MenuItem as={NextLink} href="/signin">
-              Sign in
-            </MenuItem>
-            <MenuItem as={NextLink} href="/signup">
-              Sign up
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </HStack>
-    </FlexArea>
-  );
-};
+export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => (
+  <FlexArea
+    position="sticky"
+    zIndex="sticky"
+    top="0"
+    align="center"
+    h={14}
+    mb={2}
+    px={2}
+    {...props}
+  >
+    {hasBackButton && <BackButton />}
+    <HeaderTitle>{title}</HeaderTitle>
+    <HStack flex={1} justify="flex-end">
+      <HeaderMenu />
+    </HStack>
+  </FlexArea>
+);
