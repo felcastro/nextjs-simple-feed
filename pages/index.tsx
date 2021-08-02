@@ -7,6 +7,7 @@ import {
   Flex,
   FormControl,
   FormHelperText,
+  FormErrorMessage,
   IconButton,
   Modal,
   ModalBody,
@@ -22,17 +23,24 @@ import {
   useToast,
   HStack,
   IconButtonProps,
+  Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useState, FormEvent } from "react";
+import React, { useEffect, useState } from "react";
 import { ColorResult } from "react-color";
 import { FaEdit, FaFillDrip, FaFont } from "react-icons/fa";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
 import { supabase } from "../supabaseApi";
 import { FlexArea } from "../components/FlexArea";
 import { ColorPickerButton } from "../components/ColorPickerButton";
 import { Header } from "../components/Header";
 import { Post } from "../components/Post";
 import { feedService } from "../services";
-import { FeedPostI } from "../services/feed.service";
+import { FeedPostI, PostI } from "../services/feed.service";
+import { useForm } from "react-hook-form";
+import { useAuth } from "../context";
+import { NextLink } from "../components/NextLink";
 
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
@@ -51,10 +59,29 @@ const FloatingButton = (props: IconButtonProps) => (
   />
 );
 
+interface ICreatePostFormInput {
+  post: string;
+}
+
+const createPostFormSchema = yup.object().shape({
+  post: yup.string().min(1).max(500).required(),
+});
+
 const CreatePostForm = ({ ...props }: StackProps) => {
-  const [postContent, setPostContent] = useState<string>("");
+  const { user } = useAuth();
+  const toast = useToast();
   const [backgroundColor, setBackgroundColor] = useState<string>();
   const [fontColor, setFontColor] = useState<string>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+  } = useForm<ICreatePostFormInput>({
+    resolver: yupResolver(createPostFormSchema),
+  });
+  const watchPostContent = watch("post", "");
 
   function handleBackgroundColorChange(color: ColorResult) {
     setBackgroundColor(color.hex);
@@ -64,13 +91,32 @@ const CreatePostForm = ({ ...props }: StackProps) => {
     setFontColor(color.hex);
   }
 
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
+  async function onSubmit(data) {
+    const { post } = data;
+
+    const { error } = await supabase.from("posts").insert({
+      user_uuid: user.id,
+      content: post,
+      font_color: fontColor,
+      background_color: backgroundColor,
+    });
+
+    if (error) {
+      toast({
+        isClosable: true,
+        position: "top-right",
+        title: `Error during sign in`,
+        description: error.message,
+        status: "error",
+      });
+    } else {
+      setValue("post", "");
+    }
   }
 
   return (
-    <Stack as="form" {...props} onSubmit={onSubmit}>
-      <FormControl id="post">
+    <Stack as="form" {...props} onSubmit={handleSubmit(onSubmit)}>
+      <FormControl id="post" isInvalid={!!errors.post}>
         <Textarea
           placeholder="Post something!"
           maxLength={500}
@@ -78,11 +124,16 @@ const CreatePostForm = ({ ...props }: StackProps) => {
           bg={backgroundColor ? backgroundColor : "inherit"}
           color={fontColor ? fontColor : "inherit"}
           borderColor={fontColor ? fontColor : "inherit"}
-          onChange={(e) => setPostContent(e.target.value)}
+          disabled={isSubmitting}
+          {...register("post")}
         />
         <FormHelperText>
-          {500 - postContent.length} characters left
+          {watchPostContent ? 500 - watchPostContent.length : 500} characters
+          left
         </FormHelperText>
+        <FormErrorMessage>
+          {errors.post && errors.post.message}
+        </FormErrorMessage>
       </FormControl>
       <Flex align="center">
         <HStack flex={1}>
@@ -91,15 +142,22 @@ const CreatePostForm = ({ ...props }: StackProps) => {
             aria-label="Select background color"
             color={backgroundColor}
             onColorChange={handleBackgroundColorChange}
+            isLoading={isSubmitting}
           />
           <ColorPickerButton
             icon={<FaFont />}
             aria-label="Select font color"
             color={fontColor}
             onColorChange={handleFontColorChange}
+            isLoading={isSubmitting}
           />
         </HStack>
-        <Button type="submit" colorScheme="brand" size="sm">
+        <Button
+          type="submit"
+          colorScheme="brand"
+          size="sm"
+          isLoading={isSubmitting}
+        >
           Send
         </Button>
       </Flex>
@@ -107,29 +165,44 @@ const CreatePostForm = ({ ...props }: StackProps) => {
   );
 };
 
+const SignInWarn = () => (
+  <Box>
+    <Text as="span">
+      Please{" "}
+      <NextLink as={NextLink} href="/signin">
+        sign in{" "}
+      </NextLink>
+      to post.
+    </Text>
+  </Box>
+);
+
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => (
-  <Modal isOpen={isOpen} onClose={onClose} isCentered>
-    <ModalOverlay />
-    <ModalContent>
-      <ModalHeader>New Post</ModalHeader>
-      <ModalCloseButton />
-      <ModalBody>
-        <CreatePostForm />
-      </ModalBody>
-    </ModalContent>
-  </Modal>
-);
+const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
+  const { user } = useAuth();
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>New Post</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>{user ? <CreatePostForm /> : <SignInWarn />}</ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+};
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setLoading] = useState<boolean>(false);
   const [posts, setPosts] = useState<FeedPostI[]>([]);
   const toast = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     async function loadFeed() {
@@ -157,11 +230,12 @@ export default function Home() {
 
   useEffect(() => {
     const subscription = supabase
-      .from<FeedPostI>("feed")
-      .on("INSERT", (post) => {
-        setPosts((p) => [post.new, ...p]);
+      .from<PostI>("posts")
+      .on("INSERT", async (post) => {
+        const data = await feedService.getFeedByUuid(post.new.uuid);
+        setPosts((p) => [data, ...p]);
       })
-      .on("DELETE", (post) => {
+      .on("DELETE", async (post) => {
         setPosts((p) => p.filter((p) => p.uuid !== post.new.uuid));
       })
       .subscribe();
@@ -176,10 +250,16 @@ export default function Home() {
       <Header title="Home" />
       <CreatePostModal isOpen={isOpen} onClose={onClose} />
       <FlexArea p={2} display={{ base: "none", sm: "flex" }}>
-        <Box mr={2}>
-          <Avatar />
-        </Box>
-        <CreatePostForm flex={1} />
+        {user ? (
+          <>
+            <Box mr={2}>
+              <Avatar />
+            </Box>
+            <CreatePostForm flex={1} />
+          </>
+        ) : (
+          <SignInWarn />
+        )}
       </FlexArea>
       <Divider my={2} display={{ base: "none", sm: "block" }} />
       <Stack spacing={2}>
