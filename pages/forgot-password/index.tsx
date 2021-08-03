@@ -32,11 +32,7 @@ export default function ForgotPassword() {
           </Button>
           <Stack textAlign="center">
             <Text as="span">
-              Know your password?{" "}
-              <NextLink as={NextLink} href="/signin">
-                Sign in
-              </NextLink>
-              .
+              Know your password? <NextLink href="/signin">Sign in</NextLink>.
             </Text>
           </Stack>
         </Stack>

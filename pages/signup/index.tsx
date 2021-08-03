@@ -126,10 +126,7 @@ export default function SignUp() {
           <Box textAlign="center">
             <Text as="span">
               Already have an account?{" "}
-              <NextLink as={NextLink} href="/signin">
-                Sign in
-              </NextLink>
-              .
+              <NextLink href="/signin">Sign in</NextLink>.
             </Text>
           </Box>
         </Stack>

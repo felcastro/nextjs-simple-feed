@@ -104,11 +104,7 @@ export default function SignIn() {
           <Stack textAlign="center">
             <NextLink href="/forgot-password">Forgot your password?</NextLink>
             <Text as="span">
-              New here?{" "}
-              <NextLink as={NextLink} href="/signup">
-                Create an account
-              </NextLink>
-              .
+              New here? <NextLink href="/signup">Create an account</NextLink>.
             </Text>
           </Stack>
         </Stack>
