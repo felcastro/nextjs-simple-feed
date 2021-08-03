@@ -168,10 +168,7 @@ const CreatePostForm = ({ ...props }: StackProps) => {
 const SignInWarn = () => (
   <Box>
     <Text as="span">
-      Please{" "}
-      <NextLink as={NextLink} href="/signin">
-        sign in{" "}
-      </NextLink>
+      Please <NextLink href="/signin">sign in </NextLink>
       to post.
     </Text>
   </Box>

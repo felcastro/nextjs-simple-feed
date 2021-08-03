@@ -74,17 +74,6 @@ const HeaderMenuItem = ({
 const HeaderMenu = () => {
   const { user } = useAuth();
 
-  const links = user
-    ? [
-        { href: "/", title: "Home" },
-        { title: "Logout", onClick: async () => await supabase.auth.signOut() },
-      ]
-    : [
-        { href: "/", title: "Home" },
-        { href: "/signin", title: "Sign in" },
-        { href: "/signup", title: "Sign up" },
-      ];
-
   return (
     <Menu placement="bottom-end">
       <MenuButton
@@ -94,9 +83,21 @@ const HeaderMenu = () => {
         variant="ghost"
       />
       <MenuList minW="unset">
-        {links.map((l) => (
-          <HeaderMenuItem key={l.href} {...l} />
-        ))}
+        {user ? (
+          <>
+            <HeaderMenuItem href="/" title="Home" />
+            <HeaderMenuItem
+              title="Logout"
+              onClick={async () => await supabase.auth.signOut()}
+            />
+          </>
+        ) : (
+          <>
+            <HeaderMenuItem href="/" title="Home" />
+            <HeaderMenuItem href="/signin" title="Sign in" />
+            <HeaderMenuItem href="/signup" title="Sign up" />
+          </>
+        )}
       </MenuList>
     </Menu>
   );
