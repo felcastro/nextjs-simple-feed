@@ -71,6 +71,7 @@ export default function SignUp() {
       toast({
         ...defaultToastSettings,
         title: `Error during sign up`,
+        description: err?.response?.data?.message,
         status: "error",
       });
     }
