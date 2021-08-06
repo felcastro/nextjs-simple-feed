@@ -46,7 +46,9 @@ export const Post = ({
           {format(parseISO(createdAt), "yyyy-MM-dd HH:mm")}
         </Text>
       </Stack>
-      <Box>{content}</Box>
+      <Box wordBreak="break-all" whiteSpace="pre-wrap">
+        {content}
+      </Box>
     </Stack>
   </FlexArea>
 );
