@@ -147,7 +147,7 @@ export const Post = ({
             </Text>
           </Stack>
           <PostActions
-            isOwner={user.id === ownerUuid}
+            isOwner={user?.id === ownerUuid}
             displayActions={displayActions}
             deleteAction={() => deletePost(uuid)}
           />
