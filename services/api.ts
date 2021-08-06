@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SELF_API_URL
     ? process.env.NEXT_PUBLIC_SELF_API_URL
-    : `${process.env.NEXT_PUBLIC_VERCEL_URL}/api`,
+    : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`,
 });
 
 export const setToken = (token: string): void => {
