@@ -233,7 +233,7 @@ export default function Home() {
         setPosts((p) => [data, ...p]);
       })
       .on("DELETE", async (post) => {
-        setPosts((p) => p.filter((p) => p.uuid !== post.new.uuid));
+        setPosts((p) => p.filter((p) => p.uuid !== post.old.uuid));
       })
       .subscribe();
 
@@ -268,6 +268,8 @@ export default function Home() {
           posts.map((p) => (
             <Post
               key={p.uuid}
+              uuid={p.uuid}
+              ownerUuid={p.owner_uuid}
               avatarUrl={p.owner_avatar_url}
               creatorUsername={p.owner_username}
               createdAt={p.created_at}
