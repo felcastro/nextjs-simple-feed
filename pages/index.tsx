@@ -45,7 +45,7 @@ import { NextLink } from "../components/NextLink";
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
     icon={<FaEdit />}
-    position="absolute"
+    position="fixed"
     bottom={4}
     right={4}
     width={16}
