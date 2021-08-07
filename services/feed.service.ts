@@ -15,11 +15,12 @@ export interface FeedPostI extends PostI {
   owner_avatar_url: string;
 }
 
-export async function getFeed() {
+export async function getFeed(startIndex = 0) {
   const { data, error, status } = await supabase
     .from<FeedPostI>("feed")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(startIndex, startIndex + 9);
 
   if (error && status !== 406) {
     throw error;
