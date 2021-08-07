@@ -152,7 +152,7 @@ export const Post = ({
             deleteAction={() => deletePost(uuid)}
           />
         </Flex>
-        <Box wordBreak="break-all" whiteSpace="pre-wrap">
+        <Box wordBreak="break-word" whiteSpace="pre-wrap">
           {content}
         </Box>
       </Stack>
