@@ -15,6 +15,7 @@ import {
   MenuList,
   HStack,
   Tooltip,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { format, parseISO } from "date-fns";
 import { FaEllipsisV, FaFlag, FaTrash } from "react-icons/fa";
@@ -44,6 +45,7 @@ const PostActions = ({
         variant="unstyled"
         display="inline-flex"
         alignItems="center"
+        h={{ base: "100%", sm: "inherit" }}
       />
       <MenuList minW="unset" color="ButtonText">
         {isOwner && (
@@ -129,7 +131,10 @@ export const Post = ({
       onMouseLeave={setDisplayActions.off}
     >
       <Box mr={2}>
-        <Avatar src={avatarUrl} />
+        <Avatar
+          src={avatarUrl}
+          size={useBreakpointValue({ base: "sm", sm: "md" })}
+        />
       </Box>
       <Stack flex={1}>
         <Flex justifyContent="space-between" align="center">
