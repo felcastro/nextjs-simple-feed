@@ -2,7 +2,6 @@ import {
   Avatar,
   Box,
   Button,
-  Center,
   Divider,
   Flex,
   FormControl,
@@ -25,7 +24,7 @@ import {
   IconButtonProps,
   Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { ColorResult } from "react-color";
 import { FaEdit, FaFillDrip, FaFont } from "react-icons/fa";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -196,34 +195,12 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isLoading, setLoading] = useState<boolean>(false);
   const [posts, setPosts] = useState<FeedPostI[]>([]);
   const toast = useToast();
   const { user } = useAuth();
-
-  useEffect(() => {
-    async function loadFeed() {
-      try {
-        setLoading(true);
-        const data = await feedService.getFeed();
-
-        if (data) {
-          setPosts(data);
-        }
-      } catch (err) {
-        toast({
-          title: "Error loading posts.",
-          description: "An error has ocurred while loading the feed posts.",
-          status: "error",
-          isClosable: true,
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadFeed();
-  }, [toast]);
+  const [page, setPage] = useState(0);
+  const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
+  const loader = useRef(null);
 
   useEffect(() => {
     const subscription = supabase
@@ -231,6 +208,7 @@ export default function Home() {
       .on("INSERT", async (post) => {
         const data = await feedService.getFeedByUuid(post.new.uuid);
         setPosts((p) => [data, ...p]);
+        setPage((p) => p + 1);
       })
       .on("DELETE", async (post) => {
         setPosts((p) => p.filter((p) => p.uuid !== post.old.uuid));
@@ -241,6 +219,52 @@ export default function Home() {
       subscription.unsubscribe();
     };
   }, []);
+
+  const loadPosts = useCallback(
+    async (entities) => {
+      const target = entities[0];
+      if (target.isIntersecting && hasMorePosts) {
+        try {
+          const data = await feedService.getFeed(page);
+
+          if (data) {
+            if (data.length < 10) {
+              setHasMorePosts(false);
+            } else {
+              setPage(page + 10);
+            }
+
+            setPosts((p) => [...p, ...data]);
+          }
+        } catch (err) {
+          toast({
+            title: "Error loading posts.",
+            description: "An error has ocurred while loading the feed posts.",
+            status: "error",
+            isClosable: true,
+          });
+        }
+      }
+    },
+    [hasMorePosts, page, toast]
+  );
+
+  useEffect(() => {
+    var options = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 1.0,
+    };
+
+    const observer = new IntersectionObserver(loadPosts, options);
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [loadPosts]);
 
   return (
     <>
@@ -260,25 +284,22 @@ export default function Home() {
       </FlexArea>
       <Divider my={2} display={{ base: "none", sm: "block" }} />
       <Stack spacing={2}>
-        {isLoading ? (
-          <Center p={4}>
-            <Spinner color="brand.500" />
-          </Center>
-        ) : (
-          posts.map((p) => (
-            <Post
-              key={p.uuid}
-              uuid={p.uuid}
-              ownerUuid={p.owner_uuid}
-              avatarUrl={p.owner_avatar_url}
-              creatorUsername={p.owner_username}
-              createdAt={p.created_at}
-              content={p.content}
-              fontColor={p.font_color}
-              backgroundColor={p.background_color}
-            />
-          ))
-        )}
+        {posts.map((p) => (
+          <Post
+            key={p.uuid}
+            uuid={p.uuid}
+            ownerUuid={p.owner_uuid}
+            avatarUrl={p.owner_avatar_url}
+            creatorUsername={p.owner_username}
+            createdAt={p.created_at}
+            content={p.content}
+            fontColor={p.font_color}
+            backgroundColor={p.background_color}
+          />
+        ))}
+        <Flex ref={loader} justifyContent="center" minH={8}>
+          {hasMorePosts && <Spinner color="brand.500" />}
+        </Flex>
       </Stack>
       <FloatingButton onClick={onOpen} aria-label="New post" />
     </>
