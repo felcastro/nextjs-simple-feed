@@ -16,6 +16,7 @@ import {
   HStack,
   Tooltip,
   useBreakpointValue,
+  Grid,
 } from "@chakra-ui/react";
 import { format, parseISO } from "date-fns";
 import { FaEllipsisV, FaFlag, FaTrash } from "react-icons/fa";
@@ -138,19 +139,24 @@ export const Post = ({
       </Box>
       <Stack flex={1}>
         <Flex justifyContent="space-between" align="center">
-          <Stack spacing={0}>
-            <Text as="span" lineHeight="shorter">
+          <Grid>
+            <Text
+              as="span"
+              lineHeight="shorter"
+              fontSize={{ base: "sm", sm: "md" }}
+              isTruncated
+            >
               {creatorUsername}
             </Text>
             <Text
               as="span"
-              fontSize="sm"
+              fontSize={{ base: "xs", sm: "sm" }}
               color={fontColor ? fontColor : "gray.600"}
               lineHeight="shorter"
             >
               {format(parseISO(createdAt), "yyyy-MM-dd HH:mm")}
             </Text>
-          </Stack>
+          </Grid>
           <PostActions
             isOwner={user?.id === ownerUuid}
             displayActions={displayActions}
