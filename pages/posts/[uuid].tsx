@@ -106,6 +106,7 @@ export default function PostActivity() {
     if (postUuid) {
       setPosts([]);
       setHasMorePosts(true);
+      setPage(0);
       loadParentPost();
     }
   }, [postUuid, toast]);
