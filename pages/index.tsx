@@ -1,12 +1,8 @@
 import {
   Avatar,
   Box,
-  Button,
   Divider,
   Flex,
-  FormControl,
-  FormHelperText,
-  FormErrorMessage,
   IconButton,
   Modal,
   ModalBody,
@@ -16,30 +12,23 @@ import {
   ModalOverlay,
   Spinner,
   Stack,
-  StackProps,
-  Textarea,
   useDisclosure,
   useToast,
-  HStack,
   IconButtonProps,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState, useCallback } from "react";
-import { ColorResult } from "react-color";
-import { FaEdit, FaFillDrip, FaFont } from "react-icons/fa";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { FaEdit } from "react-icons/fa";
 
 import { supabase } from "../supabaseApi";
 import { FlexArea } from "../components/FlexArea";
-import { ColorPickerButton } from "../components/ColorPickerButton";
 import { Header } from "../components/Header";
 import { Post } from "../components/Post";
 import { feedService } from "../services";
 import { FeedPostI, PostI } from "../services/feed.service";
-import { useForm } from "react-hook-form";
 import { useAuth } from "../context";
 import { NextLink } from "../components/NextLink";
+import { CreatePostForm } from "../components/CreatePostForm";
 
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
@@ -57,112 +46,6 @@ const FloatingButton = (props: IconButtonProps) => (
     {...props}
   />
 );
-
-interface ICreatePostFormInput {
-  post: string;
-}
-
-const createPostFormSchema = yup.object().shape({
-  post: yup.string().min(1).max(500).required(),
-});
-
-const CreatePostForm = ({ ...props }: StackProps) => {
-  const { user } = useAuth();
-  const toast = useToast();
-  const [backgroundColor, setBackgroundColor] = useState<string>();
-  const [fontColor, setFontColor] = useState<string>();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    watch,
-    setValue,
-  } = useForm<ICreatePostFormInput>({
-    resolver: yupResolver(createPostFormSchema),
-  });
-  const watchPostContent = watch("post", "");
-
-  function handleBackgroundColorChange(color: ColorResult) {
-    setBackgroundColor(color.hex);
-  }
-
-  function handleFontColorChange(color: ColorResult) {
-    setFontColor(color.hex);
-  }
-
-  async function onSubmit(data) {
-    const { post } = data;
-
-    const { error } = await supabase.from("posts").insert({
-      user_uuid: user.id,
-      content: post,
-      font_color: fontColor,
-      background_color: backgroundColor,
-    });
-
-    if (error) {
-      toast({
-        isClosable: true,
-        position: "top-right",
-        title: `Error during sign in`,
-        description: error.message,
-        status: "error",
-      });
-    } else {
-      setValue("post", "");
-    }
-  }
-
-  return (
-    <Stack as="form" {...props} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl id="post" isInvalid={!!errors.post}>
-        <Textarea
-          placeholder="Post something!"
-          maxLength={500}
-          maxH="xs"
-          bg={backgroundColor ? backgroundColor : "inherit"}
-          color={fontColor ? fontColor : "inherit"}
-          borderColor={fontColor ? fontColor : "inherit"}
-          disabled={isSubmitting}
-          {...register("post")}
-        />
-        <FormHelperText>
-          {watchPostContent ? 500 - watchPostContent.length : 500} characters
-          left
-        </FormHelperText>
-        <FormErrorMessage>
-          {errors.post && errors.post.message}
-        </FormErrorMessage>
-      </FormControl>
-      <Flex align="center">
-        <HStack flex={1}>
-          <ColorPickerButton
-            icon={<FaFillDrip />}
-            aria-label="Select background color"
-            color={backgroundColor}
-            onColorChange={handleBackgroundColorChange}
-            isLoading={isSubmitting}
-          />
-          <ColorPickerButton
-            icon={<FaFont />}
-            aria-label="Select font color"
-            color={fontColor}
-            onColorChange={handleFontColorChange}
-            isLoading={isSubmitting}
-          />
-        </HStack>
-        <Button
-          type="submit"
-          colorScheme="brand"
-          size="sm"
-          isLoading={isSubmitting}
-        >
-          Send
-        </Button>
-      </Flex>
-    </Stack>
-  );
-};
 
 const SignInWarn = () => (
   <Box>
@@ -203,15 +86,40 @@ export default function Home() {
   const loader = useRef(null);
 
   useEffect(() => {
+    // TODO find wait to listen to view, and filter listen by parent_uuid=is.null
     const subscription = supabase
       .from<PostI>("posts")
       .on("INSERT", async (post) => {
-        const data = await feedService.getFeedByUuid(post.new.uuid);
-        setPosts((p) => [data, ...p]);
-        setPage((p) => p + 1);
+        if (!post.new.parent_uuid) {
+          const data = await feedService.getFeedByUuid(post.new.uuid);
+          setPosts((p) => [data, ...p]);
+          setPage((p) => p + 1);
+        } else {
+          setPosts((oldPosts) =>
+            oldPosts.map((p) => {
+              if (p.uuid === post.new.parent_uuid) {
+                p.comments_count++;
+              }
+
+              return p;
+            })
+          );
+        }
       })
       .on("DELETE", async (post) => {
-        setPosts((p) => p.filter((p) => p.uuid !== post.old.uuid));
+        if (!post.old.parent_uuid) {
+          setPosts((p) => p.filter((p) => p.uuid !== post.old.uuid));
+        } else {
+          setPosts((oldPosts) =>
+            oldPosts.map((p) => {
+              if (p.uuid === post.new.parent_uuid) {
+                p.comments_count--;
+              }
+
+              return p;
+            })
+          );
+        }
       })
       .subscribe();
 
@@ -289,10 +197,12 @@ export default function Home() {
             key={p.uuid}
             uuid={p.uuid}
             ownerUuid={p.owner_uuid}
+            parentUuid={p.parent_uuid}
             avatarUrl={p.owner_avatar_url}
             creatorUsername={p.owner_username}
             createdAt={p.created_at}
             content={p.content}
+            commentsCount={p.comments_count}
             fontColor={p.font_color}
             backgroundColor={p.background_color}
           />
