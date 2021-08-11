@@ -86,7 +86,7 @@ export default function Home() {
   const loader = useRef(null);
 
   useEffect(() => {
-    // TODO find wait to listen to view, and filter listen by parent_uuid=is.null
+    // TODO find way to listen to view, and filter listen by parent_uuid=is.null
     const subscription = supabase
       .from<PostI>("posts")
       .on("INSERT", async (post) => {
