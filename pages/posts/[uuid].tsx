@@ -125,6 +125,10 @@ export default function PostActivity() {
           setPage((p) => p + 1);
         })
         .on("DELETE", async (post) => {
+          setParentPost((p) => ({
+            ...p,
+            comments_count: p.comments_count - 1,
+          }));
           setPosts((p) => p.filter((p) => p.uuid !== post.old.uuid));
         })
         .subscribe();
@@ -204,7 +208,7 @@ export default function PostActivity() {
           backgroundColor={parentPost.background_color}
         />
       )}
-      <Divider my={2} display={{ base: "none", sm: "block" }} />
+      <Divider my={2}/>
       <Stack spacing={2}>
         {parentPost &&
           posts.map((p) => (
