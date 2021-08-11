@@ -88,7 +88,11 @@ const PostActions = ({ isOwner, deleteAction }: PostActionsProps) => {
 const SignInWarn = () => (
   <Box>
     <Text as="span">
-      Please <NextLink href="/signin">sign in</NextLink> to reply.
+      Please{" "}
+      <NextLink href="/signin" onClick={(e) => e.stopPropagation()}>
+        sign in
+      </NextLink>{" "}
+      to reply.
     </Text>
   </Box>
 );
