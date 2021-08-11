@@ -5,24 +5,43 @@ import {
   Text,
   FlexProps,
   Flex,
-  Icon,
   useBoolean,
-  useBreakpoint,
   IconButton,
   MenuItem,
   Menu,
   MenuButton,
   MenuList,
-  HStack,
   Tooltip,
   useBreakpointValue,
   Grid,
+  Divider,
+  Button,
+  ButtonProps,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import { format, parseISO } from "date-fns";
-import { FaEllipsisV, FaFlag, FaTrash } from "react-icons/fa";
+import { formatDistance, parseISO } from "date-fns";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import {
+  FaComment,
+  FaEllipsisV,
+  FaFlag,
+  FaHeart,
+  FaRegHeart,
+  FaTrash,
+} from "react-icons/fa";
 import { useAuth } from "../../context";
 import { supabase } from "../../supabaseApi";
+import { CreatePostForm } from "../CreatePostForm";
 import { FlexArea } from "../FlexArea";
+import { NextLink } from "../NextLink";
 
 interface PostActionsProps {
   isOwner: boolean;
@@ -30,27 +49,29 @@ interface PostActionsProps {
   deleteAction: () => void;
 }
 
-const PostActions = ({
-  isOwner,
-  displayActions,
-  deleteAction,
-}: PostActionsProps) => {
-  const breakpoint = useBreakpoint();
-
-  return breakpoint === "base" ? (
+const PostActions = ({ isOwner, deleteAction }: PostActionsProps) => {
+  return (
     <Menu placement="left-start">
       <MenuButton
         as={IconButton}
         icon={<FaEllipsisV />}
         aria-label="Post actions"
-        variant="unstyled"
+        variant="ghost"
         display="inline-flex"
         alignItems="center"
-        h={{ base: "100%", sm: "inherit" }}
+        colorScheme="brand"
+        onClick={(e) => e.stopPropagation()}
       />
       <MenuList minW="unset" color="ButtonText">
         {isOwner && (
-          <MenuItem icon={<FaTrash />} color="red.500" onClick={deleteAction}>
+          <MenuItem
+            icon={<FaTrash />}
+            color="red.500"
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteAction();
+            }}
+          >
             Delete
           </MenuItem>
         )}
@@ -61,41 +82,88 @@ const PostActions = ({
         )}
       </MenuList>
     </Menu>
-  ) : displayActions ? (
-    <HStack color="ButtonText">
-      {isOwner && (
-        <Tooltip label="Delete post">
-          <IconButton
-            icon={<FaTrash />}
-            aria-label="Delete post"
-            size="sm"
-            color="red.500"
-            onClick={deleteAction}
-          />
-        </Tooltip>
-      )}
-      {!isOwner && (
-        <Tooltip label="Report post">
-          <IconButton
-            icon={<FaFlag />}
-            aria-label="Delete post"
-            size="sm"
-            isDisabled
-          />
-        </Tooltip>
-      )}
-    </HStack>
-  ) : (
-    <Icon as={FaEllipsisV} />
+  );
+};
+
+const SignInWarn = () => (
+  <Box>
+    <Text as="span">
+      Please <NextLink href="/signin">sign in</NextLink> to reply.
+    </Text>
+  </Box>
+);
+
+interface CreatePostModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  postParentUuid?: string;
+}
+
+const PostReplyModal = ({
+  isOpen,
+  onClose,
+  postParentUuid,
+}: CreatePostModalProps) => {
+  const { user } = useAuth();
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>New Reply</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {user ? (
+            <CreatePostForm
+              postParentUuid={postParentUuid}
+              onSuccess={onClose}
+            />
+          ) : (
+            <SignInWarn />
+          )}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+interface PostInteractionButtonProps extends ButtonProps {
+  label?: string;
+  value?: string | number;
+}
+
+const PostInteractionButton = ({
+  label,
+  leftIcon,
+  value,
+  ...props
+}: PostInteractionButtonProps) => {
+  return (
+    <Tooltip label={label} aria-label={label}>
+      <Button
+        leftIcon={leftIcon}
+        h="auto"
+        py={1}
+        px={2}
+        colorScheme="brand"
+        variant="ghost"
+        borderRadius="lg"
+        {...props}
+      >
+        {value}
+      </Button>
+    </Tooltip>
   );
 };
 
 export interface PostProps extends FlexProps {
   uuid: string;
   ownerUuid: string;
+  parentUuid?: string;
   avatarUrl: string;
   creatorUsername: string;
   content: string;
+  commentsCount: number;
   fontColor?: string;
   backgroundColor?: string;
   createdAt: string;
@@ -104,19 +172,39 @@ export interface PostProps extends FlexProps {
 export const Post = ({
   uuid,
   ownerUuid,
+  parentUuid,
   avatarUrl,
   creatorUsername,
   createdAt,
   content,
+  commentsCount,
   fontColor,
   backgroundColor,
   ...props
 }: PostProps) => {
+  const router = useRouter();
   const { user } = useAuth();
+  const toast = useToast();
   const [displayActions, setDisplayActions] = useBoolean(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLiked, setIsLiked] = useState(false);
 
   async function deletePost(uuid: string) {
-    await supabase.from("posts").delete().match({ uuid });
+    const { error } = await supabase.from("posts").delete().match({ uuid });
+
+    if (error) {
+      toast({
+        isClosable: true,
+        position: "top-right",
+        title: `Error deleting post`,
+        description: error.message,
+        status: "error",
+      });
+    }
+  }
+
+  async function toggleLikePost() {
+    setIsLiked(!isLiked);
   }
 
   return (
@@ -130,6 +218,11 @@ export const Post = ({
       {...props}
       onMouseEnter={setDisplayActions.on}
       onMouseLeave={setDisplayActions.off}
+      tabIndex={0}
+      role="link"
+      cursor="pointer"
+      _hover={{ bg: "whiteAlpha.400" }}
+      onClick={() => router.push(`/posts/${uuid}`)}
     >
       <Box mr={2}>
         <Avatar
@@ -148,14 +241,19 @@ export const Post = ({
             >
               {creatorUsername}
             </Text>
-            <Text
-              as="span"
-              fontSize={{ base: "xs", sm: "sm" }}
-              color={fontColor ? fontColor : "gray.600"}
-              lineHeight="shorter"
-            >
-              {format(parseISO(createdAt), "yyyy-MM-dd HH:mm")}
-            </Text>
+            <Box>
+              <NextLink
+                href={`/posts/${uuid}`}
+                fontSize="xs"
+                color={fontColor ? fontColor : "gray.600"}
+                lineHeight="shorter"
+                isTruncated
+              >
+                {formatDistance(parseISO(createdAt), new Date(), {
+                  addSuffix: true,
+                })}
+              </NextLink>
+            </Box>
           </Grid>
           <PostActions
             isOwner={user?.id === ownerUuid}
@@ -166,6 +264,30 @@ export const Post = ({
         <Box wordBreak="break-word" whiteSpace="pre-wrap">
           {content}
         </Box>
+        <Divider />
+        <Flex>
+          <PostInteractionButton
+            label="Reply"
+            leftIcon={<FaComment />}
+            value={commentsCount}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}
+          />
+          <PostInteractionButton
+            label="Like"
+            leftIcon={isLiked ? <FaHeart /> : <FaRegHeart />}
+            value={0}
+            onClick={toggleLikePost}
+            isDisabled={true}
+          />
+        </Flex>
+        <PostReplyModal
+          isOpen={isOpen}
+          onClose={onClose}
+          postParentUuid={uuid}
+        />
       </Stack>
     </FlexArea>
   );
