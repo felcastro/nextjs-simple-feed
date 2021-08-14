@@ -4,22 +4,17 @@ import {
   FormControl,
   FormErrorMessage,
   FormHelperText,
-  HStack,
   Stack,
   StackProps,
   Textarea,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { ColorResult } from "react-color";
 import { useForm } from "react-hook-form";
-import { FaFillDrip, FaFont } from "react-icons/fa";
 
 import { useAuth } from "../../context";
 import { supabase } from "../../supabaseApi";
-import { ColorPickerButton } from "../ColorPickerButton";
 
 export interface ICreatePostFormInput {
   post: string;
@@ -41,8 +36,6 @@ export const CreatePostForm = ({
 }: CreatePostFormProps) => {
   const { user } = useAuth();
   const toast = useToast();
-  const [backgroundColor, setBackgroundColor] = useState<string>();
-  const [fontColor, setFontColor] = useState<string>();
   const {
     register,
     handleSubmit,
@@ -54,22 +47,12 @@ export const CreatePostForm = ({
   });
   const watchPostContent = watch("post", "");
 
-  function handleBackgroundColorChange(color: ColorResult) {
-    setBackgroundColor(color.hex);
-  }
-
-  function handleFontColorChange(color: ColorResult) {
-    setFontColor(color.hex);
-  }
-
   async function onSubmit(data) {
     const { post } = data;
 
     const { error } = await supabase.from("posts").insert({
       user_uuid: user.id,
       content: post,
-      font_color: fontColor,
-      background_color: backgroundColor,
       parent_uuid: postParentUuid,
     });
 
@@ -94,9 +77,6 @@ export const CreatePostForm = ({
           placeholder="Post something!"
           maxLength={500}
           maxH="xs"
-          bg={backgroundColor ? backgroundColor : "inherit"}
-          color={fontColor ? fontColor : "inherit"}
-          borderColor={fontColor ? fontColor : "inherit"}
           disabled={isSubmitting}
           {...register("post")}
         />
@@ -108,23 +88,7 @@ export const CreatePostForm = ({
           {errors.post && errors.post.message}
         </FormErrorMessage>
       </FormControl>
-      <Flex align="center">
-        <HStack flex={1}>
-          <ColorPickerButton
-            icon={<FaFillDrip />}
-            aria-label="Select background color"
-            color={backgroundColor}
-            onColorChange={handleBackgroundColorChange}
-            isLoading={isSubmitting}
-          />
-          <ColorPickerButton
-            icon={<FaFont />}
-            aria-label="Select font color"
-            color={fontColor}
-            onColorChange={handleFontColorChange}
-            isLoading={isSubmitting}
-          />
-        </HStack>
+      <Flex align="center" justifyContent="flex-end">
         <Button
           type="submit"
           colorScheme="brand"

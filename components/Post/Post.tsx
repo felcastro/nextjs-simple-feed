@@ -168,8 +168,6 @@ export interface PostProps extends FlexProps {
   creatorUsername: string;
   content: string;
   commentsCount: number;
-  fontColor?: string;
-  backgroundColor?: string;
   createdAt: string;
 }
 
@@ -182,8 +180,6 @@ export const Post = ({
   createdAt,
   content,
   commentsCount,
-  fontColor,
-  backgroundColor,
   ...props
 }: PostProps) => {
   const { user } = useAuth();
@@ -216,9 +212,8 @@ export const Post = ({
         py={2}
         px={2}
         borderRadius="md"
-        borderColor={fontColor ? fontColor : "gray.200"}
-        color={fontColor ? fontColor : "inherit"}
-        bg={backgroundColor ? backgroundColor : "white"}
+        borderColor="gray.200"
+        bg="white"
         {...props}
         onMouseEnter={setDisplayActions.on}
         onMouseLeave={setDisplayActions.off}
@@ -245,7 +240,7 @@ export const Post = ({
                 <NextLink
                   href={`/posts/${uuid}`}
                   fontSize="xs"
-                  color={fontColor ? fontColor : "gray.600"}
+                  color="gray.600"
                   lineHeight="shorter"
                   isTruncated
                 >

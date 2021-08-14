@@ -5,8 +5,6 @@ export interface PostI {
   user_uuid: string;
   parent_uuid?: string;
   content: string;
-  font_color?: string;
-  background_color?: string;
   comments_count: number;
   created_at: string;
 }

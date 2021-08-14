@@ -203,8 +203,6 @@ export default function Home() {
             createdAt={p.created_at}
             content={p.content}
             commentsCount={p.comments_count}
-            fontColor={p.font_color}
-            backgroundColor={p.background_color}
           />
         ))}
         <Flex ref={loader} justifyContent="center" minH={8}>

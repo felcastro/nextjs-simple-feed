@@ -204,11 +204,9 @@ export default function PostActivity() {
           createdAt={parentPost.created_at}
           content={parentPost.content}
           commentsCount={parentPost.comments_count}
-          fontColor={parentPost.font_color}
-          backgroundColor={parentPost.background_color}
         />
       )}
-      <Divider my={2}/>
+      <Divider my={2} />
       <Stack spacing={2}>
         {parentPost &&
           posts.map((p) => (
@@ -222,8 +220,6 @@ export default function PostActivity() {
               createdAt={p.created_at}
               content={p.content}
               commentsCount={p.comments_count}
-              fontColor={p.font_color}
-              backgroundColor={p.background_color}
             />
           ))}
         <Flex ref={loader} justifyContent="center" minH={8}>
