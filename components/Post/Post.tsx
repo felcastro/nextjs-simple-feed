@@ -27,8 +27,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { formatDistance, parseISO } from "date-fns";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   FaComment,
   FaEllipsisV,
@@ -41,6 +40,7 @@ import { useAuth } from "../../context";
 import { supabase } from "../../supabaseApi";
 import { CreatePostForm } from "../CreatePostForm";
 import { FlexArea } from "../FlexArea";
+import { LinkRoleBox } from "../LinkRoleBox";
 import { NextLink } from "../NextLink";
 
 interface PostActionsProps {
@@ -186,7 +186,6 @@ export const Post = ({
   backgroundColor,
   ...props
 }: PostProps) => {
-  const router = useRouter();
   const { user } = useAuth();
   const toast = useToast();
   const [displayActions, setDisplayActions] = useBoolean(false);
@@ -212,87 +211,85 @@ export const Post = ({
   }
 
   return (
-    <FlexArea
-      py={2}
-      px={2}
-      borderRadius="md"
-      borderColor={fontColor ? fontColor : "gray.200"}
-      color={fontColor ? fontColor : "inherit"}
-      bg={backgroundColor ? backgroundColor : "white"}
-      {...props}
-      onMouseEnter={setDisplayActions.on}
-      onMouseLeave={setDisplayActions.off}
-      tabIndex={0}
-      role="link"
-      cursor="pointer"
-      _hover={{ bg: "whiteAlpha.400" }}
-      onClick={() => router.push(`/posts/${uuid}`)}
-    >
-      <Box mr={2}>
-        <Avatar
-          src={avatarUrl}
-          size={useBreakpointValue({ base: "sm", sm: "md" })}
-        />
-      </Box>
-      <Stack flex={1}>
-        <Flex justifyContent="space-between" align="center">
-          <Grid>
-            <Text
-              as="span"
-              lineHeight="shorter"
-              fontSize={{ base: "sm", sm: "md" }}
-              isTruncated
-            >
-              {creatorUsername}
-            </Text>
-            <Box>
-              <NextLink
-                href={`/posts/${uuid}`}
-                fontSize="xs"
-                color={fontColor ? fontColor : "gray.600"}
+    <LinkRoleBox href={`/posts/${uuid}`}>
+      <FlexArea
+        py={2}
+        px={2}
+        borderRadius="md"
+        borderColor={fontColor ? fontColor : "gray.200"}
+        color={fontColor ? fontColor : "inherit"}
+        bg={backgroundColor ? backgroundColor : "white"}
+        {...props}
+        onMouseEnter={setDisplayActions.on}
+        onMouseLeave={setDisplayActions.off}
+        _hover={{ bg: "whiteAlpha.400" }}
+      >
+        <Box mr={2}>
+          <Avatar
+            src={avatarUrl}
+            size={useBreakpointValue({ base: "sm", sm: "md" })}
+          />
+        </Box>
+        <Stack flex={1}>
+          <Flex justifyContent="space-between" align="center">
+            <Grid>
+              <Text
+                as="span"
                 lineHeight="shorter"
+                fontSize={{ base: "sm", sm: "md" }}
                 isTruncated
               >
-                {formatDistance(parseISO(createdAt), new Date(), {
-                  addSuffix: true,
-                })}
-              </NextLink>
-            </Box>
-          </Grid>
-          <PostActions
-            isOwner={user?.id === ownerUuid}
-            displayActions={displayActions}
-            deleteAction={() => deletePost(uuid)}
+                {creatorUsername}
+              </Text>
+              <Box>
+                <NextLink
+                  href={`/posts/${uuid}`}
+                  fontSize="xs"
+                  color={fontColor ? fontColor : "gray.600"}
+                  lineHeight="shorter"
+                  isTruncated
+                >
+                  {formatDistance(parseISO(createdAt), new Date(), {
+                    addSuffix: true,
+                  })}
+                </NextLink>
+              </Box>
+            </Grid>
+            <PostActions
+              isOwner={user?.id === ownerUuid}
+              displayActions={displayActions}
+              deleteAction={() => deletePost(uuid)}
+            />
+          </Flex>
+          <Box wordBreak="break-word" whiteSpace="pre-wrap">
+            {content}
+          </Box>
+          <Divider />
+          <Flex>
+            <PostInteractionButton
+              label="Reply"
+              leftIcon={<FaComment />}
+              value={commentsCount}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen();
+              }}
+            />
+            <PostInteractionButton
+              label="Like"
+              leftIcon={isLiked ? <FaHeart /> : <FaRegHeart />}
+              value={0}
+              onClick={toggleLikePost}
+              isDisabled={true}
+            />
+          </Flex>
+          <PostReplyModal
+            isOpen={isOpen}
+            onClose={onClose}
+            postParentUuid={uuid}
           />
-        </Flex>
-        <Box wordBreak="break-word" whiteSpace="pre-wrap">
-          {content}
-        </Box>
-        <Divider />
-        <Flex>
-          <PostInteractionButton
-            label="Reply"
-            leftIcon={<FaComment />}
-            value={commentsCount}
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpen();
-            }}
-          />
-          <PostInteractionButton
-            label="Like"
-            leftIcon={isLiked ? <FaHeart /> : <FaRegHeart />}
-            value={0}
-            onClick={toggleLikePost}
-            isDisabled={true}
-          />
-        </Flex>
-        <PostReplyModal
-          isOpen={isOpen}
-          onClose={onClose}
-          postParentUuid={uuid}
-        />
-      </Stack>
-    </FlexArea>
+        </Stack>
+      </FlexArea>
+    </LinkRoleBox>
   );
 };
