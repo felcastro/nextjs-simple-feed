@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Divider,
   Flex,
@@ -21,7 +20,6 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { FaEdit } from "react-icons/fa";
 
 import { supabase } from "../supabaseApi";
-import { FlexArea } from "../components/FlexArea";
 import { Header } from "../components/Header";
 import { Post } from "../components/Post";
 import { feedService } from "../services";
@@ -29,6 +27,7 @@ import { FeedPostI, PostI } from "../services/feed.service";
 import { useAuth } from "../context";
 import { NextLink } from "../components/NextLink";
 import { CreatePostForm } from "../components/CreatePostForm";
+import { CreatePostBlock } from "../components/CreatePostBlock";
 
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
@@ -80,7 +79,6 @@ export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [posts, setPosts] = useState<FeedPostI[]>([]);
   const toast = useToast();
-  const { user } = useAuth();
   const [page, setPage] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
   const loader = useRef(null);
@@ -177,19 +175,7 @@ export default function Home() {
   return (
     <>
       <Header title="Home" />
-      <CreatePostModal isOpen={isOpen} onClose={onClose} />
-      <FlexArea p={2} display={{ base: "none", sm: "flex" }}>
-        {user ? (
-          <>
-            <Box mr={2}>
-              <Avatar />
-            </Box>
-            <CreatePostForm flex={1} />
-          </>
-        ) : (
-          <SignInWarn />
-        )}
-      </FlexArea>
+      <CreatePostBlock />
       <Divider my={2} display={{ base: "none", sm: "block" }} />
       <Stack spacing={2}>
         {posts.map((p) => (
@@ -210,6 +196,7 @@ export default function Home() {
         </Flex>
       </Stack>
       <FloatingButton onClick={onOpen} aria-label="New post" />
+      <CreatePostModal isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

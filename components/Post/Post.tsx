@@ -45,11 +45,10 @@ import { NextLink } from "../NextLink";
 
 interface PostActionsProps {
   isOwner: boolean;
-  displayActions: boolean;
   deleteAction: () => void;
 }
 
-const PostActions = ({ isOwner, deleteAction }: PostActionsProps) => {
+const PostActionsMenu = ({ isOwner, deleteAction }: PostActionsProps) => {
   return (
     <Menu placement="left-start">
       <MenuButton
@@ -250,9 +249,8 @@ export const Post = ({
                 </NextLink>
               </Box>
             </Grid>
-            <PostActions
+            <PostActionsMenu
               isOwner={user?.id === ownerUuid}
-              displayActions={displayActions}
               deleteAction={() => deletePost(uuid)}
             />
           </Flex>
