@@ -17,7 +17,7 @@ import React from "react";
 import { FaArrowLeft, FaBars } from "react-icons/fa";
 import { supabase } from "../../supabaseApi";
 import { useAuth } from "../../context";
-import { FlexArea } from "../FlexArea";
+import { BaseBlock } from "../BaseBlock";
 import { NextLink } from "../NextLink";
 
 const BackButton = () => {
@@ -109,7 +109,7 @@ export interface HeaderProps extends FlexProps {
 }
 
 export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => (
-  <FlexArea
+  <BaseBlock
     position="sticky"
     zIndex="sticky"
     top="0"
@@ -124,5 +124,5 @@ export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => (
     <HStack flex={1} justify="flex-end">
       <HeaderMenu />
     </HStack>
-  </FlexArea>
+  </BaseBlock>
 );

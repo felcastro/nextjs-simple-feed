@@ -1,6 +1,6 @@
 import { Avatar, Box, Text } from "@chakra-ui/react";
 
-import { FlexArea } from "../FlexArea";
+import { BaseBlock } from "../BaseBlock";
 import { useAuth } from "../../context";
 import { CreatePostForm } from "../CreatePostForm";
 import { NextLink } from "../NextLink";
@@ -9,7 +9,7 @@ export const CreatePostBlock = () => {
   const { user } = useAuth();
 
   return (
-    <FlexArea p={2} display={{ base: "none", sm: "flex" }}>
+    <BaseBlock p={2} display={{ base: "none", sm: "flex" }}>
       {user ? (
         <>
           <Box mr={2}>
@@ -24,6 +24,6 @@ export const CreatePostBlock = () => {
           </Text>
         </Box>
       )}
-    </FlexArea>
+    </BaseBlock>
   );
 };

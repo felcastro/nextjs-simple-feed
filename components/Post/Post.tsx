@@ -5,7 +5,6 @@ import {
   Text,
   FlexProps,
   Flex,
-  useBoolean,
   IconButton,
   MenuItem,
   Menu,
@@ -39,7 +38,7 @@ import {
 import { useAuth } from "../../context";
 import { supabase } from "../../supabaseApi";
 import { CreatePostForm } from "../CreatePostForm";
-import { FlexArea } from "../FlexArea";
+import { BaseBlock } from "../BaseBlock";
 import { LinkRoleBox } from "../LinkRoleBox";
 import { NextLink } from "../NextLink";
 
@@ -84,18 +83,6 @@ const PostActionsMenu = ({ isOwner, deleteAction }: PostActionsProps) => {
   );
 };
 
-const SignInWarn = () => (
-  <Box>
-    <Text as="span">
-      Please{" "}
-      <NextLink href="/signin" onClick={(e) => e.stopPropagation()}>
-        sign in
-      </NextLink>{" "}
-      to reply.
-    </Text>
-  </Box>
-);
-
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -122,7 +109,13 @@ const PostReplyModal = ({
               onSuccess={onClose}
             />
           ) : (
-            <SignInWarn />
+            <Text as="span">
+              Please{" "}
+              <NextLink href="/signin" onClick={(e) => e.stopPropagation()}>
+                sign in
+              </NextLink>{" "}
+              to reply.
+            </Text>
           )}
         </ModalBody>
       </ModalContent>
@@ -183,7 +176,6 @@ export const Post = ({
 }: PostProps) => {
   const { user } = useAuth();
   const toast = useToast();
-  const [displayActions, setDisplayActions] = useBoolean(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLiked, setIsLiked] = useState(false);
 
@@ -207,16 +199,13 @@ export const Post = ({
 
   return (
     <LinkRoleBox href={`/posts/${uuid}`}>
-      <FlexArea
-        py={2}
-        px={2}
+      <BaseBlock
+        p={2}
         borderRadius="md"
         borderColor="gray.200"
         bg="white"
-        {...props}
-        onMouseEnter={setDisplayActions.on}
-        onMouseLeave={setDisplayActions.off}
         _hover={{ bg: "whiteAlpha.400" }}
+        {...props}
       >
         <Box mr={2}>
           <Avatar
@@ -282,7 +271,7 @@ export const Post = ({
             postParentUuid={uuid}
           />
         </Stack>
-      </FlexArea>
+      </BaseBlock>
     </LinkRoleBox>
   );
 };

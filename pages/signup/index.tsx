@@ -15,7 +15,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 
-import { FlexArea } from "../../components/FlexArea";
+import { BaseBlock } from "../../components/BaseBlock";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { supabase } from "../../supabaseApi";
@@ -80,7 +80,7 @@ export default function SignUp() {
   return (
     <>
       <Header title="Sign up" hasBackButton />
-      <FlexArea direction="column" px={2} py={16} align="center">
+      <BaseBlock direction="column" px={2} py={16} align="center">
         <Heading as="h2" size="md">
           Create an account
         </Heading>
@@ -131,7 +131,7 @@ export default function SignUp() {
             </Text>
           </Box>
         </Stack>
-      </FlexArea>
+      </BaseBlock>
     </>
   );
 }

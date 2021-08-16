@@ -46,15 +46,6 @@ const FloatingButton = (props: IconButtonProps) => (
   />
 );
 
-const SignInWarn = () => (
-  <Box>
-    <Text as="span">
-      Please <NextLink href="/signin">sign in </NextLink>
-      to post.
-    </Text>
-  </Box>
-);
-
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -69,7 +60,15 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       <ModalContent>
         <ModalHeader>New Post</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>{user ? <CreatePostForm /> : <SignInWarn />}</ModalBody>
+        <ModalBody>
+          {user ? (
+            <CreatePostForm />
+          ) : (
+            <Text as="span">
+              Please <NextLink href="/signin">sign in</NextLink> to post.
+            </Text>
+          )}
+        </ModalBody>
       </ModalContent>
     </Modal>
   );

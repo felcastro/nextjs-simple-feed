@@ -8,7 +8,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-import { FlexArea } from "../../components/FlexArea";
+import { BaseBlock } from "../../components/BaseBlock";
 import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 
@@ -18,7 +18,7 @@ export default function ForgotPassword() {
   return (
     <>
       <Header title="Password Recovery" hasBackButton />
-      <FlexArea direction="column" px={2} py={16} align="center">
+      <BaseBlock direction="column" px={2} py={16} align="center">
         <Heading as="h2" size="md">
           Inform your e-mail
         </Heading>
@@ -36,7 +36,7 @@ export default function ForgotPassword() {
             </Text>
           </Stack>
         </Stack>
-      </FlexArea>
+      </BaseBlock>
     </>
   );
 }
