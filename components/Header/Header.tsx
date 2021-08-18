@@ -1,5 +1,5 @@
 import {
-  HStack,
+  Flex,
   Heading,
   FlexProps,
   IconButton,
@@ -119,10 +119,10 @@ export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => (
     px={2}
     {...props}
   >
-    {hasBackButton && <BackButton />}
-    <HeaderTitle>{title}</HeaderTitle>
-    <HStack flex={1} justify="flex-end">
-      <HeaderMenu />
-    </HStack>
+    <Flex flex={1}>
+      {hasBackButton && <BackButton />}
+      <HeaderTitle>{title}</HeaderTitle>
+    </Flex>
+    <HeaderMenu />
   </BaseBlock>
 );
