@@ -36,18 +36,6 @@ const BackButton = () => {
   );
 };
 
-const HeaderTitle = ({ children, ...props }: HeadingProps) => (
-  <Heading
-    as="span"
-    size={useBreakpointValue({ base: "sm", sm: "lg" })}
-    fontWeight="extrabold"
-    mr={2}
-    {...props}
-  >
-    {children}
-  </Heading>
-);
-
 interface HeaderMenuItemProps extends MenuItemProps {
   title: string;
   href?: string;
@@ -81,6 +69,7 @@ const HeaderMenu = () => {
         icon={<FaBars />}
         colorScheme="brand"
         variant="ghost"
+        aria-label="Header Actions"
       />
       <MenuList minW="unset">
         {user ? (
@@ -110,6 +99,7 @@ export interface HeaderProps extends FlexProps {
 
 export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => (
   <BaseBlock
+    as="header"
     position="sticky"
     zIndex="sticky"
     top="0"
@@ -121,7 +111,15 @@ export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => (
   >
     <Flex flex={1}>
       {hasBackButton && <BackButton />}
-      <HeaderTitle>{title}</HeaderTitle>
+      <Heading
+        as="h2"
+        role="heading"
+        size={useBreakpointValue({ base: "sm", sm: "lg" })}
+        fontWeight="extrabold"
+        mr={2}
+      >
+        {title}
+      </Heading>
     </Flex>
     <HeaderMenu />
   </BaseBlock>
