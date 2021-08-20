@@ -8,6 +8,7 @@ import {
   StackProps,
   Textarea,
   useToast,
+  Progress,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -80,10 +81,12 @@ export const CreatePostForm = ({
           disabled={isSubmitting}
           {...register("post")}
         />
-        <FormHelperText>
-          {watchPostContent ? 500 - watchPostContent.length : 500} characters
-          left
-        </FormHelperText>
+        <Progress
+          value={watchPostContent ? watchPostContent.length / 5 : 0}
+          size="xs"
+          colorScheme="brand"
+          mt="2"
+        />
         <FormErrorMessage>
           {errors.post && errors.post.message}
         </FormErrorMessage>
@@ -94,6 +97,7 @@ export const CreatePostForm = ({
           colorScheme="brand"
           size="sm"
           isLoading={isSubmitting}
+          isDisabled={!watchPostContent}
         >
           Send
         </Button>
