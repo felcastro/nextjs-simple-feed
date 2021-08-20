@@ -20,6 +20,8 @@ import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { supabase } from "../../supabaseApi";
 import { authService } from "../../services";
+import { useEffect } from "react";
+import { useHeader } from "../../context/HeaderContext";
 
 interface ISignUpFormInput {
   username: string;
@@ -43,6 +45,11 @@ export default function SignUp() {
   } = useForm<ISignUpFormInput>({
     resolver: yupResolver(signUpFormSchema),
   });
+  const { setOptions } = useHeader();
+
+  useEffect(() => {
+    setOptions({ title: "Sign up", hasBackButton: true });
+  }, [setOptions]);
 
   async function onSubmit(data) {
     const defaultToastSettings: UseToastOptions = {
@@ -78,60 +85,57 @@ export default function SignUp() {
   }
 
   return (
-    <>
-      <Header title="Sign up" hasBackButton />
-      <BaseBlock direction="column" px={2} py={16} align="center">
-        <Heading as="h2" size="md">
-          Create an account
-        </Heading>
-        <Stack
-          as="form"
-          mt={4}
-          w={{ base: "100%", sm: "xs" }}
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <FormControl id="username" isInvalid={!!errors.username}>
-            <Input
-              disabled={isSubmitting}
-              placeholder="Username"
-              {...register("username")}
-            />
-            <FormErrorMessage>
-              {errors.username && errors.username.message}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl id="email" isInvalid={!!errors.email}>
-            <Input
-              disabled={isSubmitting}
-              placeholder="E-mail"
-              {...register("email")}
-            />
-            <FormErrorMessage>
-              {errors.email && errors.email.message}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl id="password" isInvalid={!!errors.password}>
-            <Input
-              disabled={isSubmitting}
-              placeholder="Password"
-              type="password"
-              {...register("password")}
-            />
-            <FormErrorMessage>
-              {errors.password && errors.password.message}
-            </FormErrorMessage>
-          </FormControl>
-          <Button type="submit" colorScheme="brand" isLoading={isSubmitting}>
-            Sign up
-          </Button>
-          <Box textAlign="center">
-            <Text as="span">
-              Already have an account?{" "}
-              <NextLink href="/signin">Sign in</NextLink>.
-            </Text>
-          </Box>
-        </Stack>
-      </BaseBlock>
-    </>
+    <BaseBlock direction="column" px={2} py={16} align="center">
+      <Heading as="h2" size="md">
+        Create an account
+      </Heading>
+      <Stack
+        as="form"
+        mt={4}
+        w={{ base: "100%", sm: "xs" }}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <FormControl id="username" isInvalid={!!errors.username}>
+          <Input
+            disabled={isSubmitting}
+            placeholder="Username"
+            {...register("username")}
+          />
+          <FormErrorMessage>
+            {errors.username && errors.username.message}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl id="email" isInvalid={!!errors.email}>
+          <Input
+            disabled={isSubmitting}
+            placeholder="E-mail"
+            {...register("email")}
+          />
+          <FormErrorMessage>
+            {errors.email && errors.email.message}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl id="password" isInvalid={!!errors.password}>
+          <Input
+            disabled={isSubmitting}
+            placeholder="Password"
+            type="password"
+            {...register("password")}
+          />
+          <FormErrorMessage>
+            {errors.password && errors.password.message}
+          </FormErrorMessage>
+        </FormControl>
+        <Button type="submit" colorScheme="brand" isLoading={isSubmitting}>
+          Sign up
+        </Button>
+        <Box textAlign="center">
+          <Text as="span">
+            Already have an account? <NextLink href="/signin">Sign in</NextLink>
+            .
+          </Text>
+        </Box>
+      </Stack>
+    </BaseBlock>
   );
 }

@@ -28,6 +28,7 @@ import { useAuth } from "../../context";
 import { NextLink } from "../../components/NextLink";
 import { CreatePostForm } from "../../components/CreatePostForm";
 import { useRouter } from "next/router";
+import { useHeader } from "../../context/HeaderContext";
 
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
@@ -84,8 +85,12 @@ export default function PostActivity() {
   const [page, setPage] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean>(false);
   const loader = useRef(null);
-
   const { uuid: postUuid } = router.query;
+  const { setOptions } = useHeader();
+
+  useEffect(() => {
+    setOptions({ title: "Post Activity", hasBackButton: true });
+  }, [setOptions]);
 
   useEffect(() => {
     async function loadParentPost() {
@@ -191,7 +196,6 @@ export default function PostActivity() {
 
   return (
     <>
-      <Header title="Post Activity" hasBackButton />
       <CreatePostModal isOpen={isOpen} onClose={onClose} />
       {parentPost && (
         <Post

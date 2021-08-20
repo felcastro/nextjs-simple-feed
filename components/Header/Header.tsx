@@ -19,6 +19,7 @@ import { supabase } from "../../supabaseApi";
 import { useAuth } from "../../context";
 import { BaseBlock } from "../BaseBlock";
 import { NextLink } from "../NextLink";
+import { useHeader } from "../../context/HeaderContext";
 
 const BackButton = () => {
   const router = useRouter();
@@ -92,35 +93,34 @@ const HeaderMenu = () => {
   );
 };
 
-export interface HeaderProps extends FlexProps {
-  title: string;
-  hasBackButton?: boolean;
-}
+export const Header = (props: FlexProps) => {
+  const { title, hasBackButton } = useHeader();
 
-export const Header = ({ title, hasBackButton, ...props }: HeaderProps) => (
-  <BaseBlock
-    as="header"
-    position="sticky"
-    zIndex="sticky"
-    top="0"
-    align="center"
-    h={14}
-    mb={2}
-    px={2}
-    {...props}
-  >
-    <Flex flex={1}>
-      {hasBackButton && <BackButton />}
-      <Heading
-        as="h2"
-        role="heading"
-        size={useBreakpointValue({ base: "sm", sm: "lg" })}
-        fontWeight="extrabold"
-        mr={2}
-      >
-        {title}
-      </Heading>
-    </Flex>
-    <HeaderMenu />
-  </BaseBlock>
-);
+  return (
+    <BaseBlock
+      as="header"
+      position="sticky"
+      zIndex="sticky"
+      top="0"
+      align="center"
+      h={14}
+      mb={2}
+      px={2}
+      {...props}
+    >
+      <Flex flex={1}>
+        {hasBackButton && <BackButton />}
+        <Heading
+          as="h2"
+          role="heading"
+          size={useBreakpointValue({ base: "sm", sm: "lg" })}
+          fontWeight="extrabold"
+          mr={2}
+        >
+          {title}
+        </Heading>
+      </Flex>
+      <HeaderMenu />
+    </BaseBlock>
+  );
+};

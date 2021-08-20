@@ -28,6 +28,7 @@ import { useAuth } from "../context";
 import { NextLink } from "../components/NextLink";
 import { CreatePostForm } from "../components/CreatePostForm";
 import { CreatePostBlock } from "../components/CreatePostBlock";
+import { useHeader } from "../context/HeaderContext";
 
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
@@ -81,6 +82,11 @@ export default function Home() {
   const [page, setPage] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
   const loader = useRef(null);
+  const { setOptions } = useHeader();
+
+  useEffect(() => {
+    setOptions({ title: "Home", hasBackButton: false });
+  }, [setOptions]);
 
   useEffect(() => {
     // TODO find way to listen to view, and filter listen by parent_uuid=is.null
@@ -173,7 +179,6 @@ export default function Home() {
 
   return (
     <>
-      <Header title="Home" />
       <CreatePostBlock />
       <Divider my={2} display={{ base: "none", sm: "block" }} />
       <Stack spacing={2}>
