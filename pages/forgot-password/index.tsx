@@ -31,7 +31,7 @@ export default function ForgotPassword() {
           <Input disabled={isLoading} placeholder="E-mail" />
           <FormErrorMessage></FormErrorMessage>
         </FormControl>
-        <Button colorScheme="brand" isLoading={isLoading}>
+        <Button colorScheme="brand" isLoading={isLoading} isDisabled={true}>
           Send recovery link
         </Button>
         <Stack textAlign="center">
