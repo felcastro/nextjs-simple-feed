@@ -20,7 +20,6 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { FaEdit } from "react-icons/fa";
 
 import { supabase } from "../supabaseApi";
-import { Header } from "../components/Header";
 import { Post } from "../components/Post";
 import { feedService } from "../services";
 import { FeedPostI, PostI } from "../services/feed.service";

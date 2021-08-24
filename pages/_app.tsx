@@ -1,7 +1,8 @@
 import { ChakraProvider, Container, extendTheme } from "@chakra-ui/react";
+import Head from "next/head";
+
 import { theme } from "../theme";
 import { AuthProvider } from "../context";
-import Head from "next/head";
 import { HeaderProvider } from "../context/HeaderContext";
 import { Header } from "../components/Header";
 

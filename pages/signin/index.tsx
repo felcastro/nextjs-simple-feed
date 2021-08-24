@@ -15,7 +15,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import { BaseBlock } from "../../components/BaseBlock";
-import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { supabase } from "../../supabaseApi";
 import { useHeader } from "../../context/HeaderContext";

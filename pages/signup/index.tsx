@@ -16,9 +16,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 
 import { BaseBlock } from "../../components/BaseBlock";
-import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
-import { supabase } from "../../supabaseApi";
 import { authService } from "../../services";
 import { useEffect } from "react";
 import { useHeader } from "../../context/HeaderContext";

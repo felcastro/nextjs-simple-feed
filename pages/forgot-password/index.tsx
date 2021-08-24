@@ -9,7 +9,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { BaseBlock } from "../../components/BaseBlock";
-import { Header } from "../../components/Header";
 import { NextLink } from "../../components/NextLink";
 import { useHeader } from "../../context/HeaderContext";
 
