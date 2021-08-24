@@ -1,7 +1,6 @@
 import {
   Box,
   Avatar,
-  Stack,
   Text,
   FlexProps,
   Flex,
@@ -25,11 +24,11 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { formatDistance, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 import React, { useState } from "react";
 import {
   FaComment,
-  FaEllipsisV,
+  FaEllipsisH,
   FaFlag,
   FaHeart,
   FaRegHeart,
@@ -41,6 +40,7 @@ import { CreatePostForm } from "../CreatePostForm";
 import { BaseBlock } from "../BaseBlock";
 import { LinkRoleBox } from "../LinkRoleBox";
 import { NextLink } from "../NextLink";
+import { formatDistanceAbr } from "../../utils/formatDistanceAbr";
 
 interface PostActionsProps {
   isOwner: boolean;
@@ -50,16 +50,19 @@ interface PostActionsProps {
 const PostActionsMenu = ({ isOwner, deleteAction }: PostActionsProps) => {
   return (
     <Menu placement="left-start">
-      <MenuButton
-        as={IconButton}
-        icon={<FaEllipsisV />}
-        aria-label="Post actions"
-        variant="ghost"
-        display="inline-flex"
-        alignItems="center"
-        colorScheme="brand"
-        onClick={(e) => e.stopPropagation()}
-      />
+      <Tooltip label="Menu" aria-label="Menu">
+        <MenuButton
+          as={IconButton}
+          icon={<FaEllipsisH />}
+          aria-label="Post actions"
+          variant="ghost"
+          display="inline-flex"
+          alignItems="center"
+          size="xs"
+          colorScheme="brand"
+          onClick={(e) => e.stopPropagation()}
+        />
+      </Tooltip>
       <MenuList minW="unset" color="ButtonText">
         {isOwner && (
           <MenuItem
@@ -213,30 +216,27 @@ export const Post = ({
             size={useBreakpointValue({ base: "sm", sm: "md" })}
           />
         </Box>
-        <Stack flex={1}>
-          <Flex justifyContent="space-between" align="center">
-            <Grid>
-              <Text
-                as="span"
-                lineHeight="shorter"
-                fontSize={{ base: "sm", sm: "md" }}
-                isTruncated
-              >
+        <Box flex={1}>
+          <Flex
+            justifyContent="space-between"
+            align="center"
+            // alignItems="start"
+          >
+            <Grid
+              templateColumns="auto auto auto"
+              display="inline-grid"
+              alignItems="center"
+              fontSize={{ base: "sm", sm: "md" }}
+            >
+              <Text as="span" whiteSpace="nowrap" overflow="hidden">
                 {creatorUsername}
               </Text>
-              <Box>
-                <NextLink
-                  href={`/posts/${uuid}`}
-                  fontSize="xs"
-                  color="gray.600"
-                  lineHeight="shorter"
-                  isTruncated
-                >
-                  {formatDistance(parseISO(createdAt), new Date(), {
-                    addSuffix: true,
-                  })}
-                </NextLink>
-              </Box>
+              <Text as="span" mx={1} color="gray.600">
+                ·
+              </Text>
+              <NextLink href={`/posts/${uuid}`} color="gray.600">
+                {formatDistanceAbr(parseISO(createdAt), new Date())}
+              </NextLink>
             </Grid>
             <PostActionsMenu
               isOwner={user?.id === ownerUuid}
@@ -246,7 +246,7 @@ export const Post = ({
           <Box wordBreak="break-word" whiteSpace="pre-wrap">
             {content}
           </Box>
-          <Divider />
+          <Divider my={2} />
           <Flex>
             <PostInteractionButton
               label="Reply"
@@ -270,7 +270,7 @@ export const Post = ({
             onClose={onClose}
             postParentUuid={uuid}
           />
-        </Stack>
+        </Box>
       </BaseBlock>
     </LinkRoleBox>
   );
