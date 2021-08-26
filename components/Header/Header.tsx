@@ -3,7 +3,6 @@ import {
   Heading,
   FlexProps,
   IconButton,
-  HeadingProps,
   useBreakpointValue,
   Menu,
   MenuButton,
