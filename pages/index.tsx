@@ -14,6 +14,8 @@ import {
   useToast,
   IconButtonProps,
   Text,
+  SlideFade,
+  Fade,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { FaEdit } from "react-icons/fa";
@@ -93,7 +95,7 @@ export default function Home() {
       .on("INSERT", async (post) => {
         if (!post.new.parent_uuid) {
           const data = await feedService.getFeedByUuid(post.new.uuid);
-          setPosts((p) => [data, ...p]);
+          setPosts((p) => [{ ...data, isNew: true }, ...p]);
           setPage((p) => p + 1);
         } else {
           setPosts((oldPosts) =>
@@ -180,19 +182,35 @@ export default function Home() {
       <CreatePostBlock />
       <Divider my={2} display={{ base: "none", sm: "block" }} />
       <Stack spacing={2}>
-        {posts.map((p) => (
-          <Post
-            key={p.uuid}
-            uuid={p.uuid}
-            ownerUuid={p.owner_uuid}
-            parentUuid={p.parent_uuid}
-            avatarUrl={p.owner_avatar_url}
-            creatorUsername={p.owner_username}
-            createdAt={p.created_at}
-            content={p.content}
-            commentsCount={p.comments_count}
-          />
-        ))}
+        {posts.map((p) =>
+          p.isNew ? (
+            <SlideFade key={p.uuid} in={p.isNew} offsetY="20px">
+              <Post
+                uuid={p.uuid}
+                ownerUuid={p.owner_uuid}
+                parentUuid={p.parent_uuid}
+                avatarUrl={p.owner_avatar_url}
+                creatorUsername={p.owner_username}
+                createdAt={p.created_at}
+                content={p.content}
+                commentsCount={p.comments_count}
+              />
+            </SlideFade>
+          ) : (
+            <Fade key={p.uuid} in={true}>
+              <Post
+                uuid={p.uuid}
+                ownerUuid={p.owner_uuid}
+                parentUuid={p.parent_uuid}
+                avatarUrl={p.owner_avatar_url}
+                creatorUsername={p.owner_username}
+                createdAt={p.created_at}
+                content={p.content}
+                commentsCount={p.comments_count}
+              />
+            </Fade>
+          )
+        )}
         <Flex ref={loader} justifyContent="center" minH={8}>
           {hasMorePosts && <Spinner color="brand.500" />}
         </Flex>

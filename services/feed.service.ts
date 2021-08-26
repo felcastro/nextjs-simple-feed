@@ -13,6 +13,7 @@ export interface FeedPostI extends PostI {
   owner_uuid: string;
   owner_username: string;
   owner_avatar_url: string;
+  isNew?: boolean;
 }
 
 export async function getFeed(startIndex = 0, parent_uuid = null) {
