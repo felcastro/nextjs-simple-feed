@@ -63,7 +63,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
         <ModalCloseButton />
         <ModalBody>
           {user ? (
-            <CreatePostForm />
+            <CreatePostForm onSuccess={onClose} />
           ) : (
             <Text as="span">
               Please <NextLink href="/signin">sign in</NextLink> to post.
