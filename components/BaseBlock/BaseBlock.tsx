@@ -1,5 +1,11 @@
-import { Flex, FlexProps } from "@chakra-ui/react";
+import { Flex, FlexProps, useColorModeValue } from "@chakra-ui/react";
 
 export const BaseBlock = (props: FlexProps) => (
-  <Flex border="1px" borderColor="gray.200" bg="white" shadow="sm" {...props} />
+  <Flex
+    border="1px"
+    borderColor={useColorModeValue("gray.200", "whiteAlpha.300")}
+    bg={useColorModeValue("white", "gray.900")}
+    shadow="sm"
+    {...props}
+  />
 );

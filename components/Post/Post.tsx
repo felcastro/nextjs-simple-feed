@@ -23,6 +23,7 @@ import {
   ModalOverlay,
   useDisclosure,
   useToast,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { parseISO } from "date-fns";
 import React, { useState } from "react";
@@ -205,9 +206,9 @@ export const Post = ({
       <BaseBlock
         p={2}
         borderRadius="md"
-        borderColor="gray.200"
-        bg="white"
-        _hover={{ bg: "whiteAlpha.400" }}
+        borderColor={useColorModeValue("gray.200", "whiteAlpha.300")}
+        bg={useColorModeValue("white", "gray.900")}
+        _hover={{ bg: useColorModeValue("whiteAlpha.400", "gray.800") }}
         {...props}
       >
         <Box mr={2}>
@@ -217,11 +218,7 @@ export const Post = ({
           />
         </Box>
         <Box flex={1}>
-          <Flex
-            justifyContent="space-between"
-            align="center"
-            // alignItems="start"
-          >
+          <Flex justifyContent="space-between" align="center">
             <Grid
               templateColumns="auto auto auto"
               display="inline-grid"
@@ -231,10 +228,17 @@ export const Post = ({
               <Text as="span" whiteSpace="nowrap" overflow="hidden">
                 {creatorUsername}
               </Text>
-              <Text as="span" mx={1} color="gray.600">
+              <Text
+                as="span"
+                mx={1}
+                color={useColorModeValue("gray.600", "whiteAlpha.600")}
+              >
                 ·
               </Text>
-              <NextLink href={`/posts/${uuid}`} color="gray.600">
+              <NextLink
+                href={`/posts/${uuid}`}
+                color={useColorModeValue("gray.600", "whiteAlpha.600")}
+              >
                 {formatDistanceAbr(parseISO(createdAt), new Date())}
               </NextLink>
             </Grid>

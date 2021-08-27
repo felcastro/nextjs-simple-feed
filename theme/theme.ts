@@ -1,10 +1,10 @@
 export const theme = {
   styles: {
-    global: {
+    global: ({ colorMode }) => ({
       body: {
-        bg: "gray.50",
+        bg: colorMode === "light" ? "gray.50" : "black",
       },
-    },
+    }),
   },
   colors: {
     brand: {

@@ -19,6 +19,7 @@ import { useAuth } from "../../context";
 import { BaseBlock } from "../BaseBlock";
 import { NextLink } from "../NextLink";
 import { useHeader } from "../../context/HeaderContext";
+import { ColorModeButton } from "../ColorModeButton";
 
 const BackButton = () => {
   const router = useRouter();
@@ -119,6 +120,7 @@ export const Header = (props: FlexProps) => {
           {title}
         </Heading>
       </Flex>
+      <ColorModeButton />
       <HeaderMenu />
     </BaseBlock>
   );
