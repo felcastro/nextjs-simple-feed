@@ -108,7 +108,7 @@ export const Header = (props: FlexProps) => {
       px={2}
       {...props}
     >
-      <Flex flex={1}>
+      <Flex flex={1} align="center">
         {hasBackButton && <BackButton />}
         <Heading
           as="h2"
