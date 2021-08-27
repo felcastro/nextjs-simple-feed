@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Flex,
-  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -13,11 +12,9 @@ import {
   Stack,
   useDisclosure,
   useToast,
-  IconButtonProps,
   Text,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { FaEdit } from "react-icons/fa";
 
 import { supabase } from "../../supabaseApi";
 import { Post } from "../../components/Post";
@@ -28,23 +25,8 @@ import { NextLink } from "../../components/NextLink";
 import { CreatePostForm } from "../../components/CreatePostForm";
 import { useRouter } from "next/router";
 import { useHeader } from "../../context/HeaderContext";
-
-const FloatingButton = (props: IconButtonProps) => (
-  <IconButton
-    icon={<FaEdit />}
-    position="fixed"
-    bottom={4}
-    right={4}
-    width={16}
-    height={16}
-    fontSize="2xl"
-    colorScheme="brand"
-    isRound
-    shadow="md"
-    display={{ base: "inline-flex", sm: "none" }}
-    {...props}
-  />
-);
+import { FloatingButton } from "../../components/FloatingButton";
+import { FaComment } from "react-icons/fa";
 
 const SignInWarn = () => (
   <Box>
@@ -58,18 +40,32 @@ const SignInWarn = () => (
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
+  postParentUuid: string;
 }
 
-const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
+const CreatePostModal = ({
+  isOpen,
+  onClose,
+  postParentUuid,
+}: CreatePostModalProps) => {
   const { user } = useAuth();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>New Post</ModalHeader>
+        <ModalHeader>New Reply</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>{user ? <CreatePostForm /> : <SignInWarn />}</ModalBody>
+        <ModalBody>
+          {user ? (
+            <CreatePostForm
+              postParentUuid={postParentUuid}
+              onSuccess={onClose}
+            />
+          ) : (
+            <SignInWarn />
+          )}
+        </ModalBody>
       </ModalContent>
     </Modal>
   );
@@ -195,7 +191,13 @@ export default function PostActivity() {
 
   return (
     <>
-      <CreatePostModal isOpen={isOpen} onClose={onClose} />
+      {parentPost && (
+        <CreatePostModal
+          isOpen={isOpen}
+          onClose={onClose}
+          postParentUuid={parentPost.uuid}
+        />
+      )}
       {parentPost && (
         <Post
           key={parentPost.uuid}
@@ -229,7 +231,13 @@ export default function PostActivity() {
           {hasMorePosts && <Spinner color="brand.500" />}
         </Flex>
       </Stack>
-      <FloatingButton onClick={onOpen} aria-label="New post" />
+      {parentPost && (
+        <FloatingButton
+          icon={<FaComment />}
+          aria-label="New comment"
+          onClick={onOpen}
+        />
+      )}
     </>
   );
 }
