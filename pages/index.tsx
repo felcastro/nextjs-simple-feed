@@ -29,6 +29,7 @@ import { NextLink } from "../components/NextLink";
 import { CreatePostForm } from "../components/CreatePostForm";
 import { CreatePostBlock } from "../components/CreatePostBlock";
 import { useHeader } from "../context/HeaderContext";
+import { CreatePostModal } from "../components/CreatePostModal";
 
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
@@ -46,34 +47,6 @@ const FloatingButton = (props: IconButtonProps) => (
     {...props}
   />
 );
-
-interface CreatePostModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
-  const { user } = useAuth();
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>New Post</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {user ? (
-            <CreatePostForm onSuccess={onClose} />
-          ) : (
-            <Text as="span">
-              Please <NextLink href="/signin">sign in</NextLink> to post.
-            </Text>
-          )}
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
-};
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();

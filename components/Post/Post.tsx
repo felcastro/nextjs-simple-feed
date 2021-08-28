@@ -42,6 +42,7 @@ import { BaseBlock } from "../BaseBlock";
 import { LinkRoleBox } from "../LinkRoleBox";
 import { NextLink } from "../NextLink";
 import { formatDistanceAbr } from "../../utils/formatDistanceAbr";
+import { CreatePostModal } from "../CreatePostModal";
 
 interface PostActionsProps {
   isOwner: boolean;
@@ -84,46 +85,6 @@ const PostActionsMenu = ({ isOwner, deleteAction }: PostActionsProps) => {
         )}
       </MenuList>
     </Menu>
-  );
-};
-
-interface CreatePostModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  postParentUuid?: string;
-}
-
-const PostReplyModal = ({
-  isOpen,
-  onClose,
-  postParentUuid,
-}: CreatePostModalProps) => {
-  const { user } = useAuth();
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>New Reply</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {user ? (
-            <CreatePostForm
-              postParentUuid={postParentUuid}
-              onSuccess={onClose}
-            />
-          ) : (
-            <Text as="span">
-              Please{" "}
-              <NextLink href="/signin" onClick={(e) => e.stopPropagation()}>
-                sign in
-              </NextLink>{" "}
-              to reply.
-            </Text>
-          )}
-        </ModalBody>
-      </ModalContent>
-    </Modal>
   );
 };
 
@@ -269,10 +230,11 @@ export const Post = ({
               isDisabled={true}
             />
           </Flex>
-          <PostReplyModal
+          <CreatePostModal
             isOpen={isOpen}
             onClose={onClose}
             postParentUuid={uuid}
+            isReply
           />
         </Box>
       </BaseBlock>

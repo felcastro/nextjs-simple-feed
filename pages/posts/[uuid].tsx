@@ -27,49 +27,7 @@ import { useRouter } from "next/router";
 import { useHeader } from "../../context/HeaderContext";
 import { FloatingButton } from "../../components/FloatingButton";
 import { FaComment } from "react-icons/fa";
-
-const SignInWarn = () => (
-  <Box>
-    <Text as="span">
-      Please <NextLink href="/signin">sign in </NextLink>
-      to post.
-    </Text>
-  </Box>
-);
-
-interface CreatePostModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  postParentUuid: string;
-}
-
-const CreatePostModal = ({
-  isOpen,
-  onClose,
-  postParentUuid,
-}: CreatePostModalProps) => {
-  const { user } = useAuth();
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>New Reply</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {user ? (
-            <CreatePostForm
-              postParentUuid={postParentUuid}
-              onSuccess={onClose}
-            />
-          ) : (
-            <SignInWarn />
-          )}
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
-};
+import { CreatePostModal } from "../../components/CreatePostModal";
 
 export default function PostActivity() {
   const router = useRouter();
@@ -196,6 +154,7 @@ export default function PostActivity() {
           isOpen={isOpen}
           onClose={onClose}
           postParentUuid={parentPost.uuid}
+          isReply
         />
       )}
       {parentPost && (
