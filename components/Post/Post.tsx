@@ -169,7 +169,10 @@ export const Post = ({
         borderRadius="md"
         borderColor={useColorModeValue("gray.200", "whiteAlpha.300")}
         bg={useColorModeValue("white", "gray.900")}
-        _hover={{ bg: useColorModeValue("whiteAlpha.400", "gray.800") }}
+        _hover={{
+          bg: useColorModeValue("whiteAlpha.400", "gray.800"),
+          transition: "background-color .2s linear",
+        }}
         {...props}
       >
         <Box mr={2}>
