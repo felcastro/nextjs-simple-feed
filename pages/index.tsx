@@ -20,6 +20,7 @@ import { FeedPostI, PostI } from "../services/feed.service";
 import { CreatePostBlock } from "../components/CreatePostBlock";
 import { useHeader } from "../context/HeaderContext";
 import { CreatePostModal } from "../components/CreatePostModal";
+import { LinkRoleBox } from "../components/LinkRoleBox";
 
 const FloatingButton = (props: IconButtonProps) => (
   <IconButton
@@ -148,29 +149,33 @@ export default function Home() {
         {posts.map((p) =>
           p.isNew ? (
             <SlideFade key={p.uuid} in={p.isNew} offsetY="20px">
-              <Post
-                uuid={p.uuid}
-                ownerUuid={p.owner_uuid}
-                parentUuid={p.parent_uuid}
-                avatarUrl={p.owner_avatar_url}
-                creatorUsername={p.owner_username}
-                createdAt={p.created_at}
-                content={p.content}
-                commentsCount={p.comments_count}
-              />
+              <LinkRoleBox href={`/posts/${p.uuid}`}>
+                <Post
+                  uuid={p.uuid}
+                  ownerUuid={p.owner_uuid}
+                  parentUuid={p.parent_uuid}
+                  avatarUrl={p.owner_avatar_url}
+                  creatorUsername={p.owner_username}
+                  createdAt={p.created_at}
+                  content={p.content}
+                  commentsCount={p.comments_count}
+                />
+              </LinkRoleBox>
             </SlideFade>
           ) : (
             <Fade key={p.uuid} in={true}>
-              <Post
-                uuid={p.uuid}
-                ownerUuid={p.owner_uuid}
-                parentUuid={p.parent_uuid}
-                avatarUrl={p.owner_avatar_url}
-                creatorUsername={p.owner_username}
-                createdAt={p.created_at}
-                content={p.content}
-                commentsCount={p.comments_count}
-              />
+              <LinkRoleBox href={`/posts/${p.uuid}`}>
+                <Post
+                  uuid={p.uuid}
+                  ownerUuid={p.owner_uuid}
+                  parentUuid={p.parent_uuid}
+                  avatarUrl={p.owner_avatar_url}
+                  creatorUsername={p.owner_username}
+                  createdAt={p.created_at}
+                  content={p.content}
+                  commentsCount={p.comments_count}
+                />
+              </LinkRoleBox>
             </Fade>
           )
         )}

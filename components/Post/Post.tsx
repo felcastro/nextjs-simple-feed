@@ -32,7 +32,6 @@ import {
 import { useAuth } from "../../context";
 import { supabase } from "../../supabaseApi";
 import { BaseBlock } from "../BaseBlock";
-import { LinkRoleBox } from "../LinkRoleBox";
 import { NextLink } from "../NextLink";
 import { formatDistanceAbr } from "../../utils/formatDistanceAbr";
 import { CreatePostModal } from "../CreatePostModal";
@@ -155,84 +154,82 @@ export const Post = ({
   }
 
   return (
-    <LinkRoleBox href={`/posts/${uuid}`}>
-      <BaseBlock
-        p={2}
-        borderRadius="md"
-        borderColor={useColorModeValue("gray.200", "whiteAlpha.300")}
-        bg={useColorModeValue("white", "gray.900")}
-        _hover={{
-          bg: useColorModeValue("whiteAlpha.400", "gray.800"),
-          transition: "background-color .2s linear",
-        }}
-        {...props}
-      >
-        <Box mr={2}>
-          <Avatar
-            src={avatarUrl}
-            size={useBreakpointValue({ base: "sm", sm: "md" })}
-          />
-        </Box>
-        <Box flex={1}>
-          <Flex justifyContent="space-between" align="center">
-            <Grid
-              templateColumns="auto auto auto"
-              display="inline-grid"
-              alignItems="center"
-              fontSize={{ base: "sm", sm: "md" }}
+    <BaseBlock
+      p={2}
+      borderRadius="md"
+      borderColor={useColorModeValue("gray.200", "whiteAlpha.300")}
+      bg={useColorModeValue("white", "gray.900")}
+      _hover={{
+        bg: useColorModeValue("whiteAlpha.400", "gray.800"),
+        transition: "background-color .2s linear",
+      }}
+      {...props}
+    >
+      <Box mr={2}>
+        <Avatar
+          src={avatarUrl}
+          size={useBreakpointValue({ base: "sm", sm: "md" })}
+        />
+      </Box>
+      <Box flex={1}>
+        <Flex justifyContent="space-between" align="center">
+          <Grid
+            templateColumns="auto auto auto"
+            display="inline-grid"
+            alignItems="center"
+            fontSize={{ base: "sm", sm: "md" }}
+          >
+            <Text as="span" whiteSpace="nowrap" overflow="hidden">
+              {creatorUsername}
+            </Text>
+            <Text
+              as="span"
+              mx={1}
+              color={useColorModeValue("gray.600", "whiteAlpha.600")}
             >
-              <Text as="span" whiteSpace="nowrap" overflow="hidden">
-                {creatorUsername}
-              </Text>
-              <Text
-                as="span"
-                mx={1}
-                color={useColorModeValue("gray.600", "whiteAlpha.600")}
-              >
-                ·
-              </Text>
-              <NextLink
-                href={`/posts/${uuid}`}
-                color={useColorModeValue("gray.600", "whiteAlpha.600")}
-              >
-                {formatDistanceAbr(parseISO(createdAt), new Date())}
-              </NextLink>
-            </Grid>
-            <PostActionsMenu
-              isOwner={user?.id === ownerUuid}
-              deleteAction={() => deletePost(uuid)}
-            />
-          </Flex>
-          <Box wordBreak="break-word" whiteSpace="pre-wrap">
-            {content}
-          </Box>
-          <Divider my={2} />
-          <Flex>
-            <PostInteractionButton
-              label="Reply"
-              leftIcon={<FaComment />}
-              value={commentsCount}
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpen();
-              }}
-            />
-            <PostInteractionButton
-              label="Like"
-              leftIcon={isLiked ? <FaHeart /> : <FaRegHeart />}
-              value={0}
-              onClick={toggleLikePost}
-              isDisabled={true}
-            />
-          </Flex>
-          <CreatePostModal
-            isOpen={isOpen}
-            onClose={onClose}
-            postParentUuid={uuid}
-            isReply
+              ·
+            </Text>
+            <NextLink
+              href={`/posts/${uuid}`}
+              color={useColorModeValue("gray.600", "whiteAlpha.600")}
+            >
+              {formatDistanceAbr(parseISO(createdAt), new Date())}
+            </NextLink>
+          </Grid>
+          <PostActionsMenu
+            isOwner={user?.id === ownerUuid}
+            deleteAction={() => deletePost(uuid)}
           />
+        </Flex>
+        <Box wordBreak="break-word" whiteSpace="pre-wrap">
+          {content}
         </Box>
-      </BaseBlock>
-    </LinkRoleBox>
+        <Divider my={2} />
+        <Flex>
+          <PostInteractionButton
+            label="Reply"
+            leftIcon={<FaComment />}
+            value={commentsCount}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}
+          />
+          <PostInteractionButton
+            label="Like"
+            leftIcon={isLiked ? <FaHeart /> : <FaRegHeart />}
+            value={0}
+            onClick={toggleLikePost}
+            isDisabled={true}
+          />
+        </Flex>
+        <CreatePostModal
+          isOpen={isOpen}
+          onClose={onClose}
+          postParentUuid={uuid}
+          isReply
+        />
+      </Box>
+    </BaseBlock>
   );
 };
