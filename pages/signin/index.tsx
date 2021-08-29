@@ -36,9 +36,11 @@ export default function SignIn() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<ISignInFormInput>({
     resolver: yupResolver(signInFormSchema),
   });
+  const watchFields = watch();
   const { setOptions } = useHeader();
 
   useEffect(() => {
@@ -102,7 +104,12 @@ export default function SignIn() {
             {errors.password && errors.password.message}
           </FormErrorMessage>
         </FormControl>
-        <Button type="submit" colorScheme="brand" isLoading={isSubmitting}>
+        <Button
+          type="submit"
+          colorScheme="brand"
+          isLoading={isSubmitting}
+          isDisabled={!watchFields?.email || !watchFields?.password}
+        >
           Sign in
         </Button>
         <Stack textAlign="center">
