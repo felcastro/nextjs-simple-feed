@@ -2,18 +2,11 @@ import {
   Divider,
   Flex,
   IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
   Stack,
   useDisclosure,
   useToast,
   IconButtonProps,
-  Text,
   SlideFade,
   Fade,
 } from "@chakra-ui/react";
@@ -24,9 +17,6 @@ import { supabase } from "../supabaseApi";
 import { Post } from "../components/Post";
 import { feedService } from "../services";
 import { FeedPostI, PostI } from "../services/feed.service";
-import { useAuth } from "../context";
-import { NextLink } from "../components/NextLink";
-import { CreatePostForm } from "../components/CreatePostForm";
 import { CreatePostBlock } from "../components/CreatePostBlock";
 import { useHeader } from "../context/HeaderContext";
 import { CreatePostModal } from "../components/CreatePostModal";

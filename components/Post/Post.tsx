@@ -15,12 +15,6 @@ import {
   Divider,
   Button,
   ButtonProps,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   useDisclosure,
   useToast,
   useColorModeValue,
@@ -37,7 +31,6 @@ import {
 } from "react-icons/fa";
 import { useAuth } from "../../context";
 import { supabase } from "../../supabaseApi";
-import { CreatePostForm } from "../CreatePostForm";
 import { BaseBlock } from "../BaseBlock";
 import { LinkRoleBox } from "../LinkRoleBox";
 import { NextLink } from "../NextLink";
@@ -131,7 +124,6 @@ export interface PostProps extends FlexProps {
 export const Post = ({
   uuid,
   ownerUuid,
-  parentUuid,
   avatarUrl,
   creatorUsername,
   createdAt,

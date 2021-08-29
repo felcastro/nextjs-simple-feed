@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   FormControl,
   FormErrorMessage,
@@ -13,7 +13,6 @@ import { NextLink } from "../../components/NextLink";
 import { useHeader } from "../../context/HeaderContext";
 
 export default function ForgotPassword() {
-  const [isLoading, setLoading] = useState<boolean>();
   const { setOptions } = useHeader();
 
   useEffect(() => {
@@ -27,10 +26,10 @@ export default function ForgotPassword() {
       </Heading>
       <Stack as="form" mt={4} w={{ base: "100%", sm: "xs" }}>
         <FormControl id="email">
-          <Input disabled={isLoading} placeholder="E-mail" />
+          <Input placeholder="E-mail" isDisabled={true} />
           <FormErrorMessage></FormErrorMessage>
         </FormControl>
-        <Button colorScheme="brand" isLoading={isLoading} isDisabled={true}>
+        <Button colorScheme="brand" isDisabled={true}>
           Send recovery link
         </Button>
         <Stack textAlign="center">

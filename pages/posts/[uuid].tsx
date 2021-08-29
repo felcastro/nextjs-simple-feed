@@ -1,18 +1,10 @@
 import {
-  Box,
   Divider,
   Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
   Stack,
   useDisclosure,
   useToast,
-  Text,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 
@@ -20,9 +12,6 @@ import { supabase } from "../../supabaseApi";
 import { Post } from "../../components/Post";
 import { feedService } from "../../services";
 import { FeedPostI, PostI } from "../../services/feed.service";
-import { useAuth } from "../../context";
-import { NextLink } from "../../components/NextLink";
-import { CreatePostForm } from "../../components/CreatePostForm";
 import { useRouter } from "next/router";
 import { useHeader } from "../../context/HeaderContext";
 import { FloatingButton } from "../../components/FloatingButton";
