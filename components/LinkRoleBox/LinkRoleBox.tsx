@@ -25,6 +25,11 @@ export const LinkRoleBox = ({
           router.push(href);
         }
       }}
+      onKeyPress={(e) => {
+        if (e.key === "Enter") {
+          router.push(href);
+        }
+      }}
       {...props}
     >
       {children}
